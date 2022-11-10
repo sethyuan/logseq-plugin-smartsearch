@@ -42,3 +42,14 @@ export async function parseContent(content) {
 
   return content.trim()
 }
+
+export function buildQuery(q) {
+  // TODO
+  return `[:find (pull ?b [*])
+          :where
+          [?t1 :block/name "前端"]
+          [?t2 :block/name "技巧"]
+          [?b :block/refs ?t1]
+          [?b :block/refs ?t2]
+          ]`
+}

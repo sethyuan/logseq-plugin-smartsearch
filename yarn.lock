@@ -429,6 +429,11 @@ process@^0.11.1:
   resolved "https://registry.npmmirror.com/process/-/process-0.11.10.tgz#7332300e840161bda3e69a1d1d91a7d4bc16f182"
   integrity sha512-cdGef/drWFoydD1JsMzuFf8100nZl+GT+yacc2bEced5f9Rjk4z+WtFUTBu9PhOi9j/jfmBPu0mMEY4wIdAF8A==
 
+rambdax@^8.1.0:
+  version "8.1.0"
+  resolved "https://registry.npmmirror.com/rambdax/-/rambdax-8.1.0.tgz#1737feb9ae33d184b1db85832dd1972b819e2630"
+  integrity sha512-8TQS3jorlSSubddKTyVrsp9mevF2WMBtdEPjp9Bk8ipVijD5/9gVXGgBF4d0JzO6kzegCFYWANrbHLyKLE6YVA==
+
 reactutils@^5.12.0:
   version "5.12.0"
   resolved "https://registry.npmmirror.com/reactutils/-/reactutils-5.12.0.tgz#a21076df60e4e46ff69b44d2ea2ceaa2cab428e2"

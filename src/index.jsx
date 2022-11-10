@@ -61,37 +61,58 @@ function provideStyles() {
   logseq.provideStyle(`
     #${INPUT_ID} {
       position: absolute;
-      top: 0;
+      top: 90%;
       left: 0;
       z-index: var(--ls-z-index-level-2);
-      border-radius: 2px;
       display: none;
     }
     .kef-ac-container {
-      background: #ddd;
-      width: 300px;
-      height: 30px;
-      padding: 0 14px;
+      background: var(--ls-primary-background-color);
+      box-shadow: var(--tw-ring-offset-shadow,0 0 #0000),var(--tw-ring-shadow,0 0 #0000),var(--tw-shadow);
+      min-width: 300px;
+      max-width: 800px;
+    }
+    .kef-ac-input {
+      width: 100%;
+      line-height: 1.2rem;
+      border: none;
+      border-bottom: 1px solid var(--ls-block-bullet-color);
+      margin-bottom: 5px;
+    }
+    .kef-ac-input:focus {
+      box-shadow: none;
+      border-color: inherit;
+    }
+    .kef-ac-list {
+      list-style-type: none;
+      margin-left: 0;
+      font-size: 0.875rem;
+      background: var(--ls-tertiary-background-color);
+      border: 1px solid var(--ls-border-color);
+      max-height: 500px;
+      overflow-y: auto;
+    }
+    .kef-ac-list:empty {
+      display: none;
+    }
+    .kef-ac-listitem {
+      padding: 8px 16px;
+      margin: 0;
+      cursor: pointer;
+    }
+    .kef-ac-listitem:hover {
+      background: var(--ls-menu-hover-color);
+    }
+    .kef-ac-chosen {
+      background: var(--ls-selection-background-color);
     }
   `)
 }
 
 async function triggerInput() {
-  const curPos = await logseq.Editor.getEditingCursorPosition()
-  if (curPos != null) {
-    inputContainer.style.top = `${curPos.top + curPos.rect.y + 30}px`
-    if (
-      curPos.left + curPos.rect.x + inputContainer.clientWidth <=
-      parent.window.innerWidth
-    ) {
-      inputContainer.style.left = `${curPos.left + curPos.rect.x}px`
-    } else {
-      inputContainer.style.left = `${
-        -inputContainer.clientWidth + parent.window.innerWidth
-      }px`
-    }
-    lastBlock = await logseq.Editor.getCurrentBlock()
-    lastPos = curPos.pos
+  const editor = parent.document.activeElement.closest(".block-editor")
+  if (editor) {
+    editor.appendChild(inputContainer)
     inputContainer.style.display = "block"
     inputContainer.querySelector("input").focus()
   }
@@ -99,13 +120,17 @@ async function triggerInput() {
 
 async function closeInput(text = "") {
   inputContainer.style.display = "none"
+  parent.document.getElementById("app-container").appendChild(inputContainer)
   if (lastBlock == null) return
   if (text) {
+    const content = lastBlock.content
     await logseq.Editor.updateBlock(
       lastBlock.uuid,
-      `${lastBlock.content}${
-        lastPos > lastBlock.content.length ? " " : ""
-      }${text}`,
+      lastPos < content.length
+        ? `${content.substring(0, lastPos)}${text}${content.substring(lastPos)}`
+        : lastPos === content.length
+        ? `${content}${text}`
+        : `${content} ${text}`,
     )
   }
   await logseq.Editor.editBlock(lastBlock.uuid, { pos: lastPos + text.length })
