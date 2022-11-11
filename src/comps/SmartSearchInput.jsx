@@ -8,6 +8,7 @@ export default function SmartSearchInput({ onClose }) {
   const ul = useRef()
   const [list, setList] = useState([])
   const [chosen, setChosen] = useState(-1)
+  const closeCalled = useRef(false)
 
   async function onKeyDown(e) {
     e.stopPropagation()
@@ -68,6 +69,8 @@ export default function SmartSearchInput({ onClose }) {
   }
 
   async function outputAndClose(output) {
+    if (closeCalled.current) return
+    closeCalled.current = true
     onClose(output)
     input.current.value = ""
     setChosen(-1)
@@ -116,6 +119,10 @@ export default function SmartSearchInput({ onClose }) {
         type="text"
         {...inputProps}
         onKeyDown={onKeyDown}
+        onFocus={() => {
+          closeCalled.current = false
+        }}
+        onBlur={() => outputAndClose()}
       />
       <ul ref={ul} class="kef-ac-list">
         {list.map((block, i) => (

@@ -9,6 +9,7 @@ const INPUT_ID = "kef-ac-input"
 let inputContainer
 let inputContainerParent
 let textarea
+let lastBlock
 
 async function main() {
   await setup({ builtinTranslations: { "zh-CN": zhCN } })
@@ -115,6 +116,7 @@ async function triggerInput() {
   textarea = parent.document.activeElement
   const editor = textarea.closest(".block-editor")
   if (editor) {
+    lastBlock = await logseq.Editor.getCurrentBlock()
     editor.appendChild(inputContainer)
     inputContainer.style.display = "block"
     inputContainer.querySelector("input").focus()
@@ -124,9 +126,21 @@ async function triggerInput() {
 async function closeInput(text = "") {
   inputContainer.style.display = "none"
   inputContainerParent.appendChild(inputContainer)
-  textarea.setRangeText(text)
-  textarea.selectionStart += text.length
+  const pos = textarea.selectionStart
+  const newPos = pos + text.length
+  if (text) {
+    const content = lastBlock.content
+    await logseq.Editor.updateBlock(
+      lastBlock.uuid,
+      pos < content.length
+        ? `${content.substring(0, pos)}${text}${content.substring(pos)}`
+        : pos === content.length
+        ? `${content}${text}`
+        : `${content} ${text}`,
+    )
+  }
   textarea.focus()
+  textarea.setSelectionRange(newPos, newPos)
 }
 
 logseq.ready(main).catch(console.error)
