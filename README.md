@@ -28,3 +28,5 @@ Triggers an input that helps you search various types of data.
 - Enter or click to insert reference, hold `Opt` or `Alt` to insert text content.
 
 ## 使用展示 (Usage)
+
+https://user-images.githubusercontent.com/3410293/201344817-97631368-3ac5-408f-a196-97d71202705f.mp4
