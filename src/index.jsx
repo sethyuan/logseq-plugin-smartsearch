@@ -62,7 +62,7 @@ function provideStyles() {
   logseq.provideStyle(`
     #${INPUT_ID} {
       position: absolute;
-      top: 90%;
+      top: 95%;
       left: 0;
       z-index: var(--ls-z-index-level-2);
       display: none;
@@ -91,7 +91,7 @@ function provideStyles() {
       font-size: 0.875rem;
       background: var(--ls-tertiary-background-color);
       border: 1px solid var(--ls-border-color);
-      max-height: 500px;
+      max-height: 400px;
       overflow-y: auto;
     }
     .kef-ac-list:empty {

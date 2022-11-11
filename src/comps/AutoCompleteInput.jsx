@@ -1,23 +1,32 @@
-import { useCallback, useRef, useState } from "preact/hooks"
+import { useCallback, useEffect, useRef, useState } from "preact/hooks"
 import { debounce } from "rambdax"
-import { cls } from "reactutils"
-import { buildQuery, isPage, parseContent } from "../libs/utils"
+import { cls, useCompositionChange } from "reactutils"
+import { buildQuery, parseContent } from "../libs/utils"
 
 export default function AutoCompleteInput({ onClose }) {
   const input = useRef()
+  const ul = useRef()
   const [list, setList] = useState([])
   const [chosen, setChosen] = useState(-1)
 
-  function onKeyDown(e) {
+  async function onKeyDown(e) {
     e.stopPropagation()
-  }
-
-  async function onKeyUp(e) {
     switch (e.key) {
       case "Escape": {
         if (!e.shiftKey && !e.ctrlKey && !e.metaKey && !e.altKey) {
           e.preventDefault()
           await outputAndClose()
+        }
+        break
+      }
+      case "Enter": {
+        if (e.isComposing) return
+        if (!e.shiftKey && !e.ctrlKey && !e.metaKey && !e.altKey) {
+          e.preventDefault()
+          await outputRef(list[chosen])
+        } else if (e.altKey && !e.shiftKey && !e.metaKey && !e.ctrlKey) {
+          e.preventDefault()
+          await outputContent(list[chosen])
         }
         break
       }
@@ -29,16 +38,6 @@ export default function AutoCompleteInput({ onClose }) {
       case "ArrowUp": {
         e.preventDefault()
         setChosen((n) => (n - 1 >= 0 ? n - 1 : list.length - 1))
-        break
-      }
-      case "Enter": {
-        if (!e.shiftKey && !e.ctrlKey && !e.metaKey && !e.altKey) {
-          e.preventDefault()
-          await outputRef(list[chosen])
-        } else if (e.altKey && !e.shiftKey && !e.metaKey && !e.ctrlKey) {
-          e.preventDefault()
-          await outputContent(list[chosen])
-        }
         break
       }
       default:
@@ -57,9 +56,8 @@ export default function AutoCompleteInput({ onClose }) {
   }
 
   async function outputRef(block) {
-    if (await isPage(block)) {
-      const page = await logseq.Editor.getPage(block.page.id)
-      await outputAndClose(`[[${page.originalName}]]`)
+    if (block["pre-block?"]) {
+      await outputAndClose(`[[${block.content}]]`)
     } else {
       await outputAndClose(`((${block.uuid}))`)
     }
@@ -78,15 +76,22 @@ export default function AutoCompleteInput({ onClose }) {
 
   const handleQuery = useCallback(
     debounce(async (e) => {
-      const q = e.target.value
+      const q = buildQuery(e.target.value)
+      // console.log(q)
+      if (!q) return
       try {
-        const result = (await logseq.DB.datascriptQuery(buildQuery(q))).flat()
+        const result = (await logseq.DB.datascriptQuery(q)).flat()
         for (const block of result) {
-          if (block.content) {
+          if (block["pre-block?"]) {
+            const page = await logseq.Editor.getPage(block.page.id)
+            block.content = page.originalName
+          } else if (block.content) {
             block.content = await parseContent(block.content)
+          } else {
+            block.content = block["original-name"]
           }
         }
-        console.log("query result:", result)
+        // console.log("query result:", result)
         setList(result)
       } catch (err) {
         console.error(err)
@@ -95,22 +100,31 @@ export default function AutoCompleteInput({ onClose }) {
     [],
   )
 
+  useEffect(() => {
+    ul.current
+      .querySelector(".kef-ac-chosen")
+      ?.scrollIntoView({ block: "nearest" })
+  }, [chosen])
+
+  const inputProps = useCompositionChange(handleQuery)
+
   return (
-    <div class="kef-ac-container" onKeyDown={onKeyDown} onKeyUp={onKeyUp}>
+    <div class="kef-ac-container">
       <input
         ref={input}
         class="kef-ac-input"
         type="text"
-        onInput={handleQuery}
+        {...inputProps}
+        onKeyDown={onKeyDown}
       />
-      <ul class="kef-ac-list">
-        {list.map((item, i) => (
+      <ul ref={ul} class="kef-ac-list">
+        {list.map((block, i) => (
           <li
-            key={item.uuid}
+            key={block.uuid}
             class={cls("kef-ac-listitem", i === chosen && "kef-ac-chosen")}
-            onClick={(e) => chooseOutput(e, item)}
+            onClick={(e) => chooseOutput(e, block)}
           >
-            {item.content}
+            {block.content}
           </li>
         ))}
       </ul>
