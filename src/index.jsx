@@ -7,8 +7,8 @@ import zhCN from "./translations/zh-CN.json"
 const INPUT_ID = "kef-ac-input"
 
 let inputContainer
-let lastBlock
-let lastPos
+let inputContainerParent
+let textarea
 
 async function main() {
   await setup({ builtinTranslations: { "zh-CN": zhCN } })
@@ -49,6 +49,7 @@ async function main() {
   // Let div root element get generated first.
   setTimeout(async () => {
     inputContainer = parent.document.getElementById(INPUT_ID)
+    inputContainerParent = inputContainer.parentNode
     render(<AutoCompleteInput onClose={closeInput} />, inputContainer)
   }, 0)
 
@@ -78,6 +79,7 @@ function provideStyles() {
       border: none;
       border-bottom: 1px solid var(--ls-block-bullet-color);
       margin-bottom: 5px;
+      background: var(--ls-tertiary-background-color) !important;
     }
     .kef-ac-input:focus {
       box-shadow: none;
@@ -110,7 +112,8 @@ function provideStyles() {
 }
 
 async function triggerInput() {
-  const editor = parent.document.activeElement.closest(".block-editor")
+  textarea = parent.document.activeElement
+  const editor = textarea.closest(".block-editor")
   if (editor) {
     editor.appendChild(inputContainer)
     inputContainer.style.display = "block"
@@ -120,20 +123,10 @@ async function triggerInput() {
 
 async function closeInput(text = "") {
   inputContainer.style.display = "none"
-  parent.document.getElementById("app-container").appendChild(inputContainer)
-  if (lastBlock == null) return
-  if (text) {
-    const content = lastBlock.content
-    await logseq.Editor.updateBlock(
-      lastBlock.uuid,
-      lastPos < content.length
-        ? `${content.substring(0, lastPos)}${text}${content.substring(lastPos)}`
-        : lastPos === content.length
-        ? `${content}${text}`
-        : `${content} ${text}`,
-    )
-  }
-  await logseq.Editor.editBlock(lastBlock.uuid, { pos: lastPos + text.length })
+  inputContainerParent.appendChild(inputContainer)
+  textarea.setRangeText(text)
+  textarea.selectionStart += text.length
+  textarea.focus()
 }
 
 logseq.ready(main).catch(console.error)

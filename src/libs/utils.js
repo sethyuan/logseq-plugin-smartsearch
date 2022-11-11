@@ -1,14 +1,8 @@
 import { parse as parseMarkdown } from "./marked-renderer.js"
 
 export async function parseContent(content) {
-  // Remove front matter.
-  content = content.replace(/---\n(-(?!--)|[^-])*\n---\n?/g, "")
-
   // Use only the first line.
   content = content.match(/.*/)[0]
-
-  // Remove macro renderers.
-  content = content.replace(/ \{\{renderer (?:\}[^\}]|[^\}])+\}\}/g, "")
 
   // Remove properties.
   content = content.replace(/\b[^:\n]+:: [^\n]+/g, "")
@@ -20,9 +14,6 @@ export async function parseContent(content) {
   content = content.replaceAll(/(\${1,2})([^\$]+)\1/g, (str, _, expr) => {
     return parent.window.katex.renderToString(expr, { throwOnError: false })
   })
-
-  // Remove tags.
-  content = content.replace(/(?:^|\s)#\S+/g, "")
 
   // Replace block refs with their content.
   let match
@@ -37,9 +28,6 @@ export async function parseContent(content) {
     )}`
   }
 
-  // Remove page refs
-  content = content.replace(/\[\[([^\]]+)\]\]/g, "$1")
-
   return content.trim()
 }
 
@@ -52,4 +40,11 @@ export function buildQuery(q) {
           [?b :block/refs ?t1]
           [?b :block/refs ?t2]
           ]`
+}
+
+export async function isPage(block) {
+  return (
+    block.parent.id === block.page.id &&
+    (await logseq.Editor.getPreviousSiblingBlock(block.uuid)) == null
+  )
 }
