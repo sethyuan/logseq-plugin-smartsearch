@@ -1,9 +1,9 @@
 {
-  "name": "logseq-plugin-autocomplete",
+  "name": "logseq-plugin-smartsearch",
   "version": "0.1.0",
   "main": "dist/index.html",
   "logseq": {
-    "id": "_sethyuan-logseq-autocomplete",
+    "id": "_sethyuan-logseq-smartsearch",
     "icon": "./icon.png"
   },
   "scripts": {

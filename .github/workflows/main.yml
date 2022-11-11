@@ -3,7 +3,7 @@
 name: Release
 
 env:
-  PLUGIN_NAME: logseq-plugin-autocomplete
+  PLUGIN_NAME: logseq-plugin-smartsearch
 
 # Controls when the workflow will run
 on:

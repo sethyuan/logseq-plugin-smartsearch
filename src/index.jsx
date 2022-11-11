@@ -1,7 +1,7 @@
 import "@logseq/libs"
 import { setup, t } from "logseq-l10n"
 import { render } from "preact"
-import AutoCompleteInput from "./comps/AutoCompleteInput"
+import SmartSearchInput from "./comps/SmartSearchInput"
 import zhCN from "./translations/zh-CN.json"
 
 const INPUT_ID = "kef-ac-input"
@@ -20,7 +20,7 @@ async function main() {
       key: "shortcut",
       type: "string",
       default: "ctrl+space",
-      description: t("Shortcut key to trigger the autocomplete input."),
+      description: t("Shortcut key to trigger the smartsearch input."),
     },
   ])
 
@@ -34,14 +34,14 @@ async function main() {
     logseq.App.registerCommandPalette(
       {
         key: "trigger-input",
-        label: t("Trigger autocomplete input"),
+        label: t("Trigger smartsearch input"),
         keybinding: { binding: logseq.settings?.shortcut },
       },
       triggerInput,
     )
   } else {
     logseq.App.registerCommandPalette(
-      { key: "trigger-input", label: t("Trigger autocomplete input") },
+      { key: "trigger-input", label: t("Trigger smartsearch input") },
       triggerInput,
     )
   }
@@ -50,12 +50,12 @@ async function main() {
   setTimeout(async () => {
     inputContainer = parent.document.getElementById(INPUT_ID)
     inputContainerParent = inputContainer.parentNode
-    render(<AutoCompleteInput onClose={closeInput} />, inputContainer)
+    render(<SmartSearchInput onClose={closeInput} />, inputContainer)
   }, 0)
 
   // logseq.beforeunload(() => {})
 
-  console.log("#autocomplete loaded")
+  console.log("#smartsearch loaded")
 }
 
 function provideStyles() {

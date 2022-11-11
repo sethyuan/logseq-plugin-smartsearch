@@ -3,7 +3,7 @@ import { debounce } from "rambdax"
 import { cls, useCompositionChange } from "reactutils"
 import { buildQuery, parseContent } from "../libs/utils"
 
-export default function AutoCompleteInput({ onClose }) {
+export default function SmartSearchInput({ onClose }) {
   const input = useRef()
   const ul = useRef()
   const [list, setList] = useState([])
@@ -81,6 +81,7 @@ export default function AutoCompleteInput({ onClose }) {
       if (!q) return
       try {
         const result = (await logseq.DB.datascriptQuery(q)).flat()
+        // console.log("query result:", result)
         for (const block of result) {
           if (block["pre-block?"]) {
             const page = await logseq.Editor.getPage(block.page.id)
@@ -91,7 +92,6 @@ export default function AutoCompleteInput({ onClose }) {
             block.content = block["original-name"]
           }
         }
-        // console.log("query result:", result)
         setList(result)
       } catch (err) {
         console.error(err)
