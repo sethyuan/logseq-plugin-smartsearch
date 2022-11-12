@@ -10,13 +10,13 @@ export default function SmartSearchInput({ onClose }) {
   const [chosen, setChosen] = useState(-1)
   const closeCalled = useRef(false)
 
-  async function onKeyDown(e) {
+  function onKeyDown(e) {
     e.stopPropagation()
     switch (e.key) {
       case "Escape": {
         if (!e.shiftKey && !e.ctrlKey && !e.metaKey && !e.altKey) {
           e.preventDefault()
-          await outputAndClose()
+          outputAndClose()
         }
         break
       }
@@ -24,10 +24,10 @@ export default function SmartSearchInput({ onClose }) {
         if (e.isComposing) return
         if (!e.shiftKey && !e.ctrlKey && !e.metaKey && !e.altKey) {
           e.preventDefault()
-          await outputRef(list[chosen])
+          outputRef(list[chosen])
         } else if (e.altKey && !e.shiftKey && !e.metaKey && !e.ctrlKey) {
           e.preventDefault()
-          await outputContent(list[chosen])
+          outputContent(list[chosen])
         }
         break
       }
@@ -46,29 +46,29 @@ export default function SmartSearchInput({ onClose }) {
     }
   }
 
-  async function chooseOutput(e, block) {
+  function chooseOutput(e, block) {
     e.stopPropagation()
     e.preventDefault()
     if (!e.shiftKey && !e.ctrlKey && !e.metaKey && !e.altKey) {
-      await outputRef(block)
+      outputRef(block)
     } else if (e.altKey && !e.shiftKey && !e.metaKey && !e.ctrlKey) {
-      await outputContent(block)
+      outputContent(block)
     }
   }
 
-  async function outputRef(block) {
+  function outputRef(block) {
     if (block["pre-block?"]) {
-      await outputAndClose(`[[${block.content}]]`)
+      outputAndClose(`[[${block.content}]]`)
     } else {
-      await outputAndClose(`((${block.uuid}))`)
+      outputAndClose(`((${block.uuid}))`)
     }
   }
 
-  async function outputContent(block) {
-    await outputAndClose(block.content)
+  function outputContent(block) {
+    outputAndClose(block.content)
   }
 
-  async function outputAndClose(output) {
+  function outputAndClose(output) {
     if (closeCalled.current) return
     closeCalled.current = true
     onClose(output)
@@ -103,6 +103,15 @@ export default function SmartSearchInput({ onClose }) {
     [],
   )
 
+  function onFocus(e) {
+    closeCalled.current = false
+  }
+
+  function onBlur(e) {
+    // HACK: let possible click run first.
+    setTimeout(outputAndClose, 100)
+  }
+
   useEffect(() => {
     ul.current
       .querySelector(".kef-ac-chosen")
@@ -119,10 +128,8 @@ export default function SmartSearchInput({ onClose }) {
         type="text"
         {...inputProps}
         onKeyDown={onKeyDown}
-        onFocus={() => {
-          closeCalled.current = false
-        }}
-        onBlur={() => outputAndClose()}
+        onFocus={onFocus}
+        onBlur={onBlur}
       />
       <ul ref={ul} class="kef-ac-list">
         {list.map((block, i) => (

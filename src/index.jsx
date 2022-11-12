@@ -85,6 +85,7 @@ function provideStyles() {
     .kef-ac-input:focus {
       box-shadow: none;
       border-color: inherit;
+      border-bottom: 1px solid var(--ls-block-bullet-color);
     }
     .kef-ac-list {
       list-style-type: none;
