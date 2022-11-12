@@ -1,13 +1,13 @@
 import { useCallback, useEffect, useRef, useState } from "preact/hooks"
 import { debounce } from "rambdax"
 import { cls, useCompositionChange } from "reactutils"
-import { buildQuery, parseContent } from "../libs/utils"
+import { buildQuery, filterMatch, parseContent } from "../libs/utils"
 
 export default function SmartSearchInput({ onClose }) {
   const input = useRef()
   const ul = useRef()
   const [list, setList] = useState([])
-  const [chosen, setChosen] = useState(-1)
+  const [chosen, setChosen] = useState(0)
   const closeCalled = useRef(false)
 
   function onKeyDown(e) {
@@ -73,13 +73,13 @@ export default function SmartSearchInput({ onClose }) {
     closeCalled.current = true
     onClose(output)
     input.current.value = ""
-    setChosen(-1)
+    setChosen(0)
     setList([])
   }
 
   const handleQuery = useCallback(
     debounce(async (e) => {
-      const q = buildQuery(e.target.value)
+      const [q, filter] = buildQuery(e.target.value)
       // console.log(q)
       if (!q) return
       try {
@@ -95,7 +95,11 @@ export default function SmartSearchInput({ onClose }) {
             block.content = block["original-name"]
           }
         }
-        setList(result)
+        setList(
+          filter
+            ? result.filter(({ content }) => filterMatch(filter, content))
+            : result,
+        )
       } catch (err) {
         console.error(err)
       }

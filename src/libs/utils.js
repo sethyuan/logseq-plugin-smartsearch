@@ -29,11 +29,17 @@ export async function parseContent(content) {
 }
 
 export function buildQuery(q) {
-  if (!q) return null
-  const conds = q.split(/[,，]/).map((s) => s.trim())
+  if (!q) return []
+  const filterIndex = Math.max(q.lastIndexOf(";"), q.lastIndexOf("；"))
+  const conds = (filterIndex > -1 ? q.substring(0, filterIndex) : q)
+    .split(/[,，]/)
+    .map((s) => s.trim())
   const condStr = conds.map((cond, i) => buildCond(cond, i)).join("\n")
-  if (!condStr) return null
-  return `[:find (pull ?b [*]) :where ${condStr}]`
+  if (!condStr) return []
+  return [
+    `[:find (pull ?b [*]) :where ${condStr}]`,
+    filterIndex > -1 ? q.substring(filterIndex + 1).trim() : null,
+  ]
 }
 
 function buildCond(cond, i) {
@@ -58,4 +64,15 @@ function buildCond(cond, i) {
          [(contains? ?v${i} ?str-val)]))`
     }
   }
+}
+
+export function filterMatch(filter, content) {
+  for (let i = 0, j = 0; i < content.length && j < filter.length; i++) {
+    const t = filter[j]
+    const c = content[i]
+    if (c !== t) continue
+    j++
+    if (j >= filter.length) return true
+  }
+  return false
 }

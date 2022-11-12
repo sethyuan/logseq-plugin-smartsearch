@@ -12,6 +12,7 @@ Triggers an input that helps you search various types of data.
 - 可搜索拥有某属性的内容。格式为 `@property`。
 - 可按照属性值搜索内容。格式为 `@property: value`。
 - 可任意组合标签与属性搜索内容，以 `,` 分割。格式为 `#Book, @published: 2022`。
+- 可在最后加 `;` 进一步过滤查询结果。例如：`#book; holmes`。
 - 能识别中文标点，不用刻意切换到英文。
 - 支持键盘上下键选择或鼠标点击。
 - 正常选择（回车或鼠标点击）插入引用，按住 `Opt` 或 `Alt` 选择插入文字内容。
@@ -24,6 +25,7 @@ Triggers an input that helps you search various types of data.
 - Search by property existence. Format `@property`.
 - Search by property value. Format `@property: value`.
 - Make combinations of tags and properties, separate them with a `,`. Format `#Book, @published: 2022`.
+- Put a `;` at the end to further filter the results. E.g, `#book; holmes`.
 - Select using keyboard arrow keys or mouse.
 - Enter or click to insert reference, hold `Opt` or `Alt` to insert text content.
 
