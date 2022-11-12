@@ -32,3 +32,5 @@ Triggers an input that helps you search various types of data.
 ## 使用展示 (Usage)
 
 https://user-images.githubusercontent.com/3410293/201344817-97631368-3ac5-408f-a196-97d71202705f.mp4
+
+https://user-images.githubusercontent.com/3410293/201457231-4e0575e3-b145-41c7-9748-b82b1006ac51.mp4
