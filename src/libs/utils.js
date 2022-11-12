@@ -45,23 +45,20 @@ export function buildQuery(q) {
 function buildCond(cond, i) {
   if (cond.length <= 1) return ""
   if (cond.startsWith("#")) {
-    const name = cond.substring(1)
+    const name = cond.substring(1).toLowerCase()
     return `[?t${i} :block/name "${name}"] [?b :block/refs ?t${i}]`
   } else if (cond.startsWith("@")) {
     const [name, value] = cond
       .substring(1)
       .split(/[:：]/)
-      .map((s) => s.trim())
+      .map((s, i) => (i === 0 ? s.trim().toLowerCase() : s.trim()))
     if (value == null) {
       return `[?b :block/properties ?bp${i}] [(get ?bp${i} :${name})] (not [?b :block/name])`
     } else {
       return `[?b :block/properties ?bp${i}] [(get ?bp${i} :${name}) ?v${i}] (not [?b :block/name]) (or-join [?v${i}]
         [(= ?v${i} "${value}")]
-        [(contains? ?v${i} "${value}")]
-        ;; For integer pages that aren't strings
-        (and
-         [(str "${value}") ?str-val]
-         [(contains? ?v${i} ?str-val)]))`
+        [(= ?v${i} ${value})]
+        [(contains? ?v${i} "${value}")])`
     }
   }
 }
