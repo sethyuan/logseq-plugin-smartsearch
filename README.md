@@ -15,7 +15,8 @@ Triggers an input that helps you search various types of data.
 - 可在最后加 `;` 进一步过滤查询结果。例如：`#book; holmes`。
 - 能识别中文标点，不用刻意切换到英文。
 - 支持键盘上下键选择或鼠标点击。
-- 正常选择（回车或鼠标点击）插入引用，按住 `Opt` 或 `Alt` 选择插入文字内容。
+- 正常选择（回车或鼠标点击）插入引用，按住 `opt` 或 `alt` 选择插入文字内容。
+- 按住 `shift` 选择跳转到块或页面，按住 `shift+alt` 选择在右侧边栏打开块或页面。
 
 ## Feature Highlights
 
@@ -27,7 +28,8 @@ Triggers an input that helps you search various types of data.
 - Make combinations of tags and properties, separate them with a `,`. Format `#Book, @published: 2022`.
 - Put a `;` at the end to further filter the results. E.g, `#book; holmes`.
 - Select using keyboard arrow keys or mouse.
-- Enter or click to insert reference, hold `Opt` or `Alt` to insert text content.
+- Select (Enter or click) to insert reference, hold `opt` or `alt` and select to insert text content.
+- Hold `shift` and select to go to the page or block，hold `shift+alt` and select to open the page or block in the right sidebar.
 
 ## 使用展示 (Usage)
 

@@ -10,73 +10,6 @@ export default function SmartSearchInput({ onClose }) {
   const [chosen, setChosen] = useState(0)
   const closeCalled = useRef(false)
 
-  function onKeyDown(e) {
-    e.stopPropagation()
-    switch (e.key) {
-      case "Escape": {
-        if (!e.shiftKey && !e.ctrlKey && !e.metaKey && !e.altKey) {
-          e.preventDefault()
-          outputAndClose()
-        }
-        break
-      }
-      case "Enter": {
-        if (e.isComposing) return
-        if (!e.shiftKey && !e.ctrlKey && !e.metaKey && !e.altKey) {
-          e.preventDefault()
-          outputRef(list[chosen])
-        } else if (e.altKey && !e.shiftKey && !e.metaKey && !e.ctrlKey) {
-          e.preventDefault()
-          outputContent(list[chosen])
-        }
-        break
-      }
-      case "ArrowDown": {
-        e.preventDefault()
-        setChosen((n) => (n + 1 < list.length ? n + 1 : 0))
-        break
-      }
-      case "ArrowUp": {
-        e.preventDefault()
-        setChosen((n) => (n - 1 >= 0 ? n - 1 : list.length - 1))
-        break
-      }
-      default:
-        break
-    }
-  }
-
-  function chooseOutput(e, block) {
-    e.stopPropagation()
-    e.preventDefault()
-    if (!e.shiftKey && !e.ctrlKey && !e.metaKey && !e.altKey) {
-      outputRef(block)
-    } else if (e.altKey && !e.shiftKey && !e.metaKey && !e.ctrlKey) {
-      outputContent(block)
-    }
-  }
-
-  function outputRef(block) {
-    if (block["pre-block?"]) {
-      outputAndClose(`[[${block.content}]]`)
-    } else {
-      outputAndClose(`((${block.uuid}))`)
-    }
-  }
-
-  function outputContent(block) {
-    outputAndClose(block.content)
-  }
-
-  function outputAndClose(output) {
-    if (closeCalled.current) return
-    closeCalled.current = true
-    onClose(output)
-    input.current.value = ""
-    setChosen(0)
-    setList([])
-  }
-
   const handleQuery = useCallback(
     debounce(async (e) => {
       const [q, filter] = buildQuery(e.target.value)
@@ -106,6 +39,104 @@ export default function SmartSearchInput({ onClose }) {
     }, 300),
     [],
   )
+
+  function onKeyDown(e) {
+    e.stopPropagation()
+    switch (e.key) {
+      case "Escape": {
+        if (!e.shiftKey && !e.ctrlKey && !e.metaKey && !e.altKey) {
+          e.preventDefault()
+          outputAndClose()
+        }
+        break
+      }
+      case "Enter": {
+        if (e.isComposing) return
+        if (!e.shiftKey && !e.ctrlKey && !e.metaKey && !e.altKey) {
+          e.preventDefault()
+          outputRef(list[chosen])
+        } else if (e.altKey && !e.shiftKey && !e.metaKey && !e.ctrlKey) {
+          e.preventDefault()
+          outputContent(list[chosen])
+        } else if (e.shiftKey && !e.ctrlKey && !e.metaKey && !e.altKey) {
+          e.preventDefault()
+          gotoBlock(list[chosen])
+          outputAndClose()
+        } else if (e.shiftKey && e.altKey && !e.ctrlKey && !e.metaKey) {
+          e.preventDefault()
+          gotoBlock(list[chosen], true)
+          outputAndClose()
+        }
+        break
+      }
+      case "ArrowDown": {
+        e.preventDefault()
+        setChosen((n) => (n + 1 < list.length ? n + 1 : 0))
+        break
+      }
+      case "ArrowUp": {
+        e.preventDefault()
+        setChosen((n) => (n - 1 >= 0 ? n - 1 : list.length - 1))
+        break
+      }
+      default:
+        break
+    }
+  }
+
+  function chooseOutput(e, block) {
+    e.stopPropagation()
+    e.preventDefault()
+    if (!e.shiftKey && !e.ctrlKey && !e.metaKey && !e.altKey) {
+      outputRef(block)
+    } else if (e.altKey && !e.shiftKey && !e.metaKey && !e.ctrlKey) {
+      outputContent(block)
+    } else if (e.shiftKey && !e.metaKey && !e.ctrlKey && !e.altKey) {
+      gotoBlock(block)
+      outputAndClose()
+    } else if (e.shiftKey && e.altKey && !e.ctrlKey && !e.metaKey) {
+      gotoBlock(block, true)
+      outputAndClose()
+    }
+  }
+
+  function outputRef(block) {
+    if (block["pre-block?"]) {
+      outputAndClose(`[[${block.content}]]`)
+    } else {
+      outputAndClose(`((${block.uuid}))`)
+    }
+  }
+
+  function outputContent(block) {
+    outputAndClose(block.content)
+  }
+
+  function outputAndClose(output) {
+    if (closeCalled.current) return
+    closeCalled.current = true
+    onClose(output)
+    input.current.value = ""
+    setChosen(0)
+    setList([])
+  }
+
+  async function gotoBlock(block, inSidebar = false) {
+    if (block["pre-block?"]) {
+      if (inSidebar) {
+        const page = await logseq.Editor.getPage(block.page.id)
+        logseq.Editor.openInRightSidebar(page.uuid)
+      } else {
+        logseq.Editor.scrollToBlockInPage(block.content)
+      }
+    } else {
+      if (inSidebar) {
+        logseq.Editor.openInRightSidebar(block.uuid)
+      } else {
+        logseq.Editor.scrollToBlockInPage(block.uuid)
+      }
+    }
+  }
 
   function onFocus(e) {
     closeCalled.current = false
