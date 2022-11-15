@@ -130,7 +130,7 @@ async function closeInput(text = "") {
   const pos = textarea.selectionStart
   const newPos = pos + text.length
   if (text) {
-    const content = lastBlock.content
+    const content = textarea.value
     await logseq.Editor.updateBlock(
       lastBlock.uuid,
       pos < content.length
