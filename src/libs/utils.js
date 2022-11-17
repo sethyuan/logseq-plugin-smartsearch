@@ -63,13 +63,15 @@ function buildCond(cond, i) {
   }
 }
 
-export function filterMatch(filter, content) {
-  for (let i = 0, j = 0; i < content.length && j < filter.length; i++) {
-    const t = filter[j]
-    const c = content[i]
-    if (c !== t) continue
-    j++
-    if (j >= filter.length) return true
-  }
-  return false
+export function createMatcher(filter) {
+    if (!filter) {
+        return function (content) { return !!content; }
+    }
+    const re = new RegExp(filter.replace(/\W/g, '\\$&'), 'i');
+    return function (content) {
+        if (!content) {
+            return false;
+        }
+        return re.test(content)
+    }
 }

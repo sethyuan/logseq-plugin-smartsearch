@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from "preact/hooks"
 import { debounce } from "rambdax"
 import { cls, useCompositionChange } from "reactutils"
-import { buildQuery, filterMatch, parseContent } from "../libs/utils"
+import { buildQuery, createMatcher, parseContent } from "../libs/utils"
 
 export default function SmartSearchInput({ onClose }) {
   const input = useRef()
@@ -28,11 +28,8 @@ export default function SmartSearchInput({ onClose }) {
             block.content = block["original-name"]
           }
         }
-        setList(
-          filter
-            ? result.filter(({ content }) => filterMatch(filter, content))
-            : result,
-        )
+        const filterMatch = createMatcher(filter)
+        setList(result.filter(({ content }) => filterMatch(content)))
       } catch (err) {
         console.error(err)
       }
