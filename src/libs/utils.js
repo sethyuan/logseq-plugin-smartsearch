@@ -46,7 +46,7 @@ function buildCond(cond, i) {
   if (cond.length <= 1) return ""
   if (cond.startsWith("#")) {
     const name = cond.substring(1).toLowerCase()
-    return `[?t${i} :block/name "${name}"] [?b :block/refs ?t${i}]`
+    return `[?t${i} :block/name "${name}"] [?b :block/path-refs ?t${i}]`
   } else if (cond.startsWith("@")) {
     const [name, value] = cond
       .substring(1)
