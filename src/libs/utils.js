@@ -67,6 +67,8 @@ function buildCond(cond, i) {
 }
 
 export function filterMatch(filter, content) {
+  if (!filter) return true;
+  if (!content) return false;
   for (let i = 0, j = 0; i < content.length && j < filter.length; i++) {
     const t = filter[j].toLowerCase()
     const c = content[i].toLowerCase()
