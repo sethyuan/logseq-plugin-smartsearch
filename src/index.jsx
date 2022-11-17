@@ -23,6 +23,18 @@ async function main() {
       default: "ctrl+space",
       description: t("Shortcut key to trigger the smartsearch input."),
     },
+    {
+      key: "filter_mode",
+      type: "enum",
+      default: "fuzzy",
+      enumPicker: "select",
+      enumChoices: [
+        "fuzzy",
+        "simple",
+      ],
+      description: "How should the filter work?",
+      title: "Filter mode",
+    },
   ])
 
   logseq.provideUI({

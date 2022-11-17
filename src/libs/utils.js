@@ -63,15 +63,35 @@ function buildCond(cond, i) {
   }
 }
 
-export function createMatcher(filter) {
+function filterMatch(filter, content) {
+  for (let i = 0, j = 0; i < content.length && j < filter.length; i++) {
+    const t = filter[j]
+    const c = content[i]
+    if (c !== t) continue
+    j++
+    if (j >= filter.length) return true
+  }
+  return false
+}
+
+export function createMatcher(config, filter) {
     if (!filter) {
         return function (content) { return !!content; }
     }
-    const re = new RegExp(filter.replace(/\W/g, '\\$&'), 'i');
-    return function (content) {
-        if (!content) {
-            return false;
+
+    if (config.filter_mode === 'simple') {
+        const re = new RegExp(filter.replace(/\W/g, '\\$&'), 'i');
+        return function (content) {
+            if (!content) {
+                return false;
+            }
+            return re.test(content)
         }
-        return re.test(content)
+    } else if (config.filter_mode === 'fuzzy') {
+        return function (content) {
+            return filterMatch(filter, content);
+        }
     }
+
+    return null;
 }

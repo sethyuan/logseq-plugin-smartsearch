@@ -28,8 +28,8 @@ export default function SmartSearchInput({ onClose }) {
             block.content = block["original-name"]
           }
         }
-        const filterMatch = createMatcher(filter)
-        setList(result.filter(({ content }) => filterMatch(content)))
+        const filterMatch = createMatcher(logseq.settings, filter)
+        setList(filterMatch === null ? result : result.filter(({ content }) => filterMatch(content)))
       } catch (err) {
         console.error(err)
       }
