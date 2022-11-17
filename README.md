@@ -8,7 +8,7 @@ Triggers an input that helps you search various types of data.
 
 - 编辑时，用默认快捷键 `ctrl+space` 呼出，可在设置中更改。
 - `esc` 退出输入框。
-- 可按照标签搜索内容。格式为 `#tag`。
+- 可按照标签搜索内容。格式为 `#tag`（或 `##tag` 如要包含它的子块）。
 - 可搜索拥有某属性的内容。格式为 `@property`。
 - 可按照属性值搜索内容。格式为 `@property: value`。
 - 可任意组合标签与属性搜索内容，以 `,` 分割。格式为 `#Book, @published: 2022`。
@@ -22,7 +22,7 @@ Triggers an input that helps you search various types of data.
 
 - While editing, use the default shortcut key `ctrl+space` to call it out. You can change it in settings.
 - `esc` to close the input.
-- Search by tag. Format `#tag`.
+- Search by tag. Format `#tag` (or `##tag` to also include it's children).
 - Search by property existence. Format `@property`.
 - Search by property value. Format `@property: value`.
 - Make combinations of tags and properties, separate them with a `,`. Format `#Book, @published: 2022`.

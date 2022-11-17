@@ -44,7 +44,10 @@ export function buildQuery(q) {
 
 function buildCond(cond, i) {
   if (cond.length <= 1) return ""
-  if (cond.startsWith("#")) {
+  if (cond.startsWith("##")) {
+    const name = cond.substring(2).toLowerCase()
+    return `[?t${i} :block/name "${name}"] [?b :block/path-refs ?t${i}]`
+  } else if (cond.startsWith("#")) {
     const name = cond.substring(1).toLowerCase()
     return `[?t${i} :block/name "${name}"] [?b :block/refs ?t${i}]`
   } else if (cond.startsWith("@")) {
@@ -65,8 +68,8 @@ function buildCond(cond, i) {
 
 export function filterMatch(filter, content) {
   for (let i = 0, j = 0; i < content.length && j < filter.length; i++) {
-    const t = filter[j]
-    const c = content[i]
+    const t = filter[j].toLowerCase()
+    const c = content[i].toLowerCase()
     if (c !== t) continue
     j++
     if (j >= filter.length) return true
