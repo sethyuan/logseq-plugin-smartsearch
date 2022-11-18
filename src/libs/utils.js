@@ -44,12 +44,14 @@ export function buildQuery(q) {
 
 function buildCond(cond, i) {
   if (cond.length <= 1) return ""
-  if (cond.startsWith("##")) {
-    const name = cond.substring(2).toLowerCase()
-    return `[?t${i} :block/name "${name}"] [?b :block/path-refs ?t${i}]`
-  } else if (cond.startsWith("#")) {
-    const name = cond.substring(1).toLowerCase()
-    return `[?t${i} :block/name "${name}"] [?b :block/refs ?t${i}]`
+  if (cond.startsWith("#")) {
+    if (cond[1] === "#") {
+      const name = cond.substring(2).toLowerCase()
+      return `[?t${i} :block/name "${name}"] [?bp :block/refs ?t${i}] [?bp :block/uuid ?uuid] (or [?b :block/uuid ?uuid] [?b :block/parent ?bp])`
+    } else {
+      const name = cond.substring(1).toLowerCase()
+      return `[?t${i} :block/name "${name}"] [?b :block/refs ?t${i}]`
+    }
   } else if (cond.startsWith("@")) {
     const [name, value] = cond
       .substring(1)
