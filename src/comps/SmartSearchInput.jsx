@@ -9,14 +9,24 @@ export default function SmartSearchInput({ onClose }) {
   const [list, setList] = useState([])
   const [chosen, setChosen] = useState(0)
   const closeCalled = useRef(false)
+  const lastQ = useRef()
+  const lastResult = useRef([])
 
   const handleQuery = useCallback(
     debounce(async (e) => {
       const [q, filter] = buildQuery(e.target.value)
       // console.log(q)
       if (!q) return
+
+      if (q === lastQ.current && lastResult.current) {
+        setList(postProcessResult(lastResult.current, filter))
+        return
+      }
+
+      lastQ.current = q
       try {
         const result = (await logseq.DB.datascriptQuery(q)).flat()
+        lastResult.current = result
         // console.log("query result:", result)
         for (const block of result) {
           if (block["pre-block?"]) {
@@ -28,11 +38,7 @@ export default function SmartSearchInput({ onClose }) {
             block.content = block["original-name"]
           }
         }
-        setList(
-          filter
-            ? result.filter(({ content }) => filterMatch(filter, content))
-            : result,
-        )
+        setList(postProcessResult(result, filter))
       } catch (err) {
         console.error(err)
       }
@@ -179,4 +185,13 @@ export default function SmartSearchInput({ onClose }) {
       </ul>
     </div>
   )
+}
+
+function postProcessResult(result, filter) {
+  // Limit to the first n results.
+  return (
+    filter
+      ? result.filter(({ content }) => filterMatch(filter, content))
+      : result
+  ).slice(0, 100)
 }
