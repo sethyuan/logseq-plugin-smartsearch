@@ -11,7 +11,8 @@ Triggers an input that helps you search various types of data.
 - 可按照标签搜索内容。格式为 `#tag`（或 `##tag` 如要包含它的子块）。
 - 可搜索拥有某属性的内容。格式为 `@property`。
 - 可按照属性值搜索内容。格式为 `@property: value`。
-- 可任意组合标签与属性搜索内容，以 `,` 分割。格式为 `#Book, @published: 2022`。
+- 可搜索各种状态的任务。格式为 `[]nltidwc`。`n`=`NOW`, `l`=`LATER`, `t`=`TODO`, `i`=`DOING`, `d`=`DONE`, `w`=`WAITING`, `c`=`CANCELED`.
+- 可任意组合标签、属性、任务搜索内容，以 `,` 分割。格式为 `#Book, @published: 2022`。
 - 可在最后加 `;` 进一步过滤查询结果。例如：`#book; holmes`。
 - 能识别中文标点，不用刻意切换到英文。
 - 支持键盘上下键选择或鼠标点击。
@@ -25,7 +26,8 @@ Triggers an input that helps you search various types of data.
 - Search by tag. Format `#tag` (or `##tag` to also include it's children).
 - Search by property existence. Format `@property`.
 - Search by property value. Format `@property: value`.
-- Make combinations of tags and properties, separate them with a `,`. Format `#Book, @published: 2022`.
+- Search by task status。Format `[]nltidwc`. `n`=`NOW`, `l`=`LATER`, `t`=`TODO`, `i`=`DOING`, `d`=`DONE`, `w`=`WAITING`, `c`=`CANCELED`.
+- Make combinations of tags, properties and tasks, separate them with a `,`. Format `#Book, @published: 2022`.
 - Put a `;` at the end to further filter the results. E.g, `#book; holmes`.
 - Select using keyboard arrow keys or mouse.
 - Select (Enter or click) to insert reference, hold `opt` or `alt` and select to insert text content.
