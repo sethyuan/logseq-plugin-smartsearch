@@ -47,7 +47,7 @@ function buildCond(cond, i) {
   if (cond.startsWith("#")) {
     if (cond[1] === "#") {
       const name = cond.substring(2).toLowerCase()
-      return `[?t${i} :block/name "${name}"] [?bp :block/refs ?t${i}] [?bp :block/uuid ?uuid] (or [?b :block/uuid ?uuid] [?b :block/parent ?bp])`
+      return `[?t${i} :block/name "${name}"] [?b :block/path-refs ?t${i}]`
     } else {
       const name = cond.substring(1).toLowerCase()
       return `[?t${i} :block/name "${name}"] [?b :block/refs ?t${i}]`
@@ -65,6 +65,11 @@ function buildCond(cond, i) {
         [(= ?v${i} ${value})]
         [(contains? ?v${i} "${value}")])`
     }
+  } else if (cond.startsWith("[]") || cond.startsWith("【】")) {
+    const status = toStatus(cond.substring(2))
+    return `[?b :block/marker ?m] (or ${status
+      .map((status) => `[(= ?m "${status}")]`)
+      .join(" ")})`
   }
 }
 
@@ -79,4 +84,36 @@ export function filterMatch(filter, content) {
     if (j >= filter.length) return true
   }
   return false
+}
+
+function toStatus(s) {
+  const ret = new Set()
+  for (const c of s) {
+    switch (c) {
+      case "n":
+        ret.add("NOW")
+        break
+      case "l":
+        ret.add("LATER")
+        break
+      case "t":
+        ret.add("TODO")
+        break
+      case "i":
+        ret.add("DOING")
+        break
+      case "d":
+        ret.add("DONE")
+        break
+      case "w":
+        ret.add("WAITING")
+        break
+      case "c":
+        ret.add("CANCELED")
+        break
+      default:
+        break
+    }
+  }
+  return Array.from(ret)
 }

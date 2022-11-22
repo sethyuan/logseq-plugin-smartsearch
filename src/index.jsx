@@ -71,7 +71,7 @@ function provideStyles() {
     .kef-ac-container {
       background: var(--ls-primary-background-color);
       box-shadow: var(--tw-ring-offset-shadow,0 0 #0000),var(--tw-ring-shadow,0 0 #0000),var(--tw-shadow);
-      min-width: 300px;
+      min-width: 350px;
       max-width: 800px;
     }
     .kef-ac-input {
