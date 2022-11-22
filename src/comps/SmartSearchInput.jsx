@@ -201,13 +201,15 @@ export default function SmartSearchInput({ onClose }) {
     }
   }
 
-  function completeTag(tagName) {
-    // Prevent input from closing due to onblur.
-    closeCalled.current = true
-    // Reset and give focus back after onblur runs.
-    setTimeout(() => {
-      input.current.focus()
-    }, BLUR_WAIT + 1)
+  function completeTag(tagName, viaClick = false) {
+    if (viaClick) {
+      // Prevent input from closing due to onblur.
+      closeCalled.current = true
+      // Reset and give focus back after onblur runs.
+      setTimeout(() => {
+        input.current.focus()
+      }, BLUR_WAIT + 1)
+    }
 
     const value = input.current.value
     const index = value.lastIndexOf("#")
@@ -258,7 +260,7 @@ export default function SmartSearchInput({ onClose }) {
             <li
               key={tag.name}
               class={cls("kef-ss-listitem", i === chosen && "kef-ss-chosen")}
-              onClick={() => completeTag(tag.name)}
+              onClick={() => completeTag(tag.name, true)}
             >
               <span class="kef-ss-tagicon">T</span>
               <span>{tag.name}</span>
