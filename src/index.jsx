@@ -4,7 +4,7 @@ import { render } from "preact"
 import SmartSearchInput from "./comps/SmartSearchInput"
 import zhCN from "./translations/zh-CN.json"
 
-const INPUT_ID = "kef-ac-input"
+const INPUT_ID = "kef-ss-input"
 
 let inputContainer
 let inputContainerParent
@@ -68,13 +68,13 @@ function provideStyles() {
       z-index: var(--ls-z-index-level-2);
       display: none;
     }
-    .kef-ac-container {
+    .kef-ss-container {
       background: var(--ls-primary-background-color);
       box-shadow: var(--tw-ring-offset-shadow,0 0 #0000),var(--tw-ring-shadow,0 0 #0000),var(--tw-shadow);
       min-width: 350px;
       max-width: 800px;
     }
-    .kef-ac-input {
+    .kef-ss-input {
       width: 100%;
       line-height: 1.2rem;
       border: none;
@@ -82,12 +82,12 @@ function provideStyles() {
       margin-bottom: 5px;
       background: var(--ls-tertiary-background-color) !important;
     }
-    .kef-ac-input:focus {
+    .kef-ss-input:focus {
       box-shadow: none;
       border-color: inherit;
       border-bottom: 1px solid var(--ls-block-bullet-color);
     }
-    .kef-ac-list {
+    .kef-ss-list {
       list-style-type: none;
       margin-left: 0;
       font-size: 0.875rem;
@@ -96,19 +96,24 @@ function provideStyles() {
       max-height: 400px;
       overflow-y: auto;
     }
-    .kef-ac-list:empty {
+    .kef-ss-list:empty {
       display: none;
     }
-    .kef-ac-listitem {
+    .kef-ss-listitem {
       padding: 8px 16px;
       margin: 0;
       cursor: pointer;
     }
-    .kef-ac-listitem:hover {
+    .kef-ss-listitem:hover {
       background: var(--ls-menu-hover-color);
     }
-    .kef-ac-chosen {
+    .kef-ss-chosen {
       background: var(--ls-selection-background-color);
+    }
+    .kef-ss-tagicon {
+      margin-right: 1em;
+      font-weight: bold;
+      font-size: 0.875em;
     }
   `)
 }

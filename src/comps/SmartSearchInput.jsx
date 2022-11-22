@@ -3,48 +3,67 @@ import { debounce } from "rambdax"
 import { cls, useCompositionChange } from "reactutils"
 import { buildQuery, filterMatch, parseContent } from "../libs/utils"
 
+const BLUR_WAIT = 100
+
 export default function SmartSearchInput({ onClose }) {
   const input = useRef()
   const ul = useRef()
   const [list, setList] = useState([])
+  const [tagList, setTagList] = useState([])
   const [chosen, setChosen] = useState(0)
   const closeCalled = useRef(false)
   const lastQ = useRef()
   const lastResult = useRef([])
 
   const handleQuery = useCallback(
-    debounce(async (e) => {
-      const [q, filter] = buildQuery(e.target.value)
-      // console.log(q)
-      if (!q) return
-
-      if (q === lastQ.current && lastResult.current) {
-        setList(postProcessResult(lastResult.current, filter))
-        return
-      }
-
-      lastQ.current = q
-      try {
-        const result = (await logseq.DB.datascriptQuery(q)).flat()
-        lastResult.current = result
-        // console.log("query result:", result)
-        for (const block of result) {
-          if (block["pre-block?"]) {
-            const page = await logseq.Editor.getPage(block.page.id)
-            block.content = page.originalName
-          } else if (block.content) {
-            block.content = await parseContent(block.content)
-          } else {
-            block.content = block["original-name"]
-          }
-        }
-        setList(postProcessResult(result, filter))
-      } catch (err) {
-        console.error(err)
-      }
-    }, 300),
+    debounce((e) => performQuery(e.target.value), 300),
     [],
   )
+
+  async function performQuery(query) {
+    const [q, filter, tagQ, tag] = buildQuery(query)
+    // console.log(q)
+
+    if (!q) {
+      setList([])
+      setTagList([])
+      return
+    }
+
+    if (q === lastQ.current && lastResult.current) {
+      setList(postProcessResult(lastResult.current, filter))
+      return
+    }
+
+    lastQ.current = q
+    try {
+      const result = (await logseq.DB.datascriptQuery(q))
+        .flat()
+        .filter((b) => b["pre-block?"] || b.content)
+      lastResult.current = result
+      // console.log("query result:", result)
+
+      if (!tagQ) {
+        setTagList([])
+      } else if (result.length === 0) {
+        findTag(tagQ, tag)
+      }
+
+      for (const block of result) {
+        if (block["pre-block?"]) {
+          const page = await logseq.Editor.getPage(block.page.id)
+          block.content = page.originalName
+        } else if (block.content) {
+          block.content = await parseContent(block.content)
+        } else {
+          block.content = block["original-name"]
+        }
+      }
+      setList(postProcessResult(result, filter))
+    } catch (err) {
+      console.error(err, q)
+    }
+  }
 
   function onKeyDown(e) {
     e.stopPropagation()
@@ -58,31 +77,44 @@ export default function SmartSearchInput({ onClose }) {
       }
       case "Enter": {
         if (e.isComposing) return
-        if (!e.shiftKey && !e.ctrlKey && !e.metaKey && !e.altKey) {
-          e.preventDefault()
-          outputRef(list[chosen])
-        } else if (e.altKey && !e.shiftKey && !e.metaKey && !e.ctrlKey) {
-          e.preventDefault()
-          outputContent(list[chosen])
-        } else if (e.shiftKey && !e.ctrlKey && !e.metaKey && !e.altKey) {
-          e.preventDefault()
-          gotoBlock(list[chosen])
-          outputAndClose()
-        } else if (e.shiftKey && e.altKey && !e.ctrlKey && !e.metaKey) {
-          e.preventDefault()
-          gotoBlock(list[chosen], true)
-          outputAndClose()
+        if (list.length > 0) {
+          if (!e.shiftKey && !e.ctrlKey && !e.metaKey && !e.altKey) {
+            e.preventDefault()
+            outputRef(list[chosen])
+          } else if (e.altKey && !e.shiftKey && !e.metaKey && !e.ctrlKey) {
+            e.preventDefault()
+            outputContent(list[chosen])
+          } else if (e.shiftKey && !e.ctrlKey && !e.metaKey && !e.altKey) {
+            e.preventDefault()
+            gotoBlock(list[chosen])
+            outputAndClose()
+          } else if (e.shiftKey && e.altKey && !e.ctrlKey && !e.metaKey) {
+            e.preventDefault()
+            gotoBlock(list[chosen], true)
+            outputAndClose()
+          }
+        } else if (tagList.length > 0) {
+          if (!e.shiftKey && !e.ctrlKey && !e.metaKey && !e.altKey) {
+            e.preventDefault()
+            completeTag(tagList[chosen].name)
+          }
         }
         break
       }
       case "ArrowDown": {
         e.preventDefault()
-        setChosen((n) => (n + 1 < list.length ? n + 1 : 0))
+        const len = list.length || tagList.length
+        if (len > 0) {
+          setChosen((n) => (n + 1 < len ? n + 1 : 0))
+        }
         break
       }
       case "ArrowUp": {
         e.preventDefault()
-        setChosen((n) => (n - 1 >= 0 ? n - 1 : list.length - 1))
+        const len = list.length || tagList.length
+        if (len > 0) {
+          setChosen((n) => (n - 1 >= 0 ? n - 1 : len - 1))
+        }
         break
       }
       default:
@@ -125,6 +157,7 @@ export default function SmartSearchInput({ onClose }) {
     input.current.value = ""
     setChosen(0)
     setList([])
+    setTagList([])
   }
 
   async function gotoBlock(block, inSidebar = false) {
@@ -150,38 +183,87 @@ export default function SmartSearchInput({ onClose }) {
 
   function onBlur(e) {
     // HACK: let possible click run first.
-    setTimeout(outputAndClose, 100)
+    setTimeout(outputAndClose, BLUR_WAIT)
+  }
+
+  async function findTag(tagQ, tag) {
+    try {
+      const result = (await logseq.DB.datascriptQuery(tagQ)).flat()
+      // console.log("tag result", result)
+      if (result.length === 1 && result[0].name === tag) {
+        setTagList([])
+      } else {
+        setTagList(postProcessResult(result))
+      }
+      setChosen(0)
+    } catch (err) {
+      console.error(err, tagQ)
+    }
+  }
+
+  function completeTag(tagName) {
+    // Prevent input from closing due to onblur.
+    closeCalled.current = true
+    // Reset and give focus back after onblur runs.
+    setTimeout(() => {
+      input.current.focus()
+    }, BLUR_WAIT + 1)
+
+    const value = input.current.value
+    const index = value.lastIndexOf("#")
+    if (index < 0) return
+    // Handle #, ##, #> cases.
+    const query = `${value.substring(
+      0,
+      index + (value[index + 1] === ">" ? 2 : 1),
+    )}${tagName}`
+    input.current.value = query
+    performQuery(query)
+    setChosen(0)
   }
 
   useEffect(() => {
     ul.current
-      .querySelector(".kef-ac-chosen")
+      .querySelector(".kef-ss-chosen")
       ?.scrollIntoView({ block: "nearest" })
   }, [chosen])
 
   const inputProps = useCompositionChange(handleQuery)
 
   return (
-    <div class="kef-ac-container">
+    <div class="kef-ss-container">
       <input
         ref={input}
-        class="kef-ac-input"
+        class="kef-ss-input"
         type="text"
         {...inputProps}
         onKeyDown={onKeyDown}
         onFocus={onFocus}
         onBlur={onBlur}
       />
-      <ul ref={ul} class="kef-ac-list">
+      <ul ref={ul} class="kef-ss-list">
         {list.map((block, i) => (
           <li
             key={block.uuid}
-            class={cls("kef-ac-listitem", i === chosen && "kef-ac-chosen")}
+            class={cls("kef-ss-listitem", i === chosen && "kef-ss-chosen")}
             onClick={(e) => chooseOutput(e, block)}
           >
-            {block.content}
+            {block.content.split("\n").map((line) => (
+              <div key={line}>{line}</div>
+            ))}
           </li>
         ))}
+        {list.length === 0 &&
+          tagList.map((tag, i) => (
+            <li
+              key={tag.name}
+              class={cls("kef-ss-listitem", i === chosen && "kef-ss-chosen")}
+              onClick={() => completeTag(tag.name)}
+            >
+              <span class="kef-ss-tagicon">T</span>
+              <span>{tag.name}</span>
+            </li>
+          ))}
       </ul>
     </div>
   )

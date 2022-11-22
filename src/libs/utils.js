@@ -1,16 +1,6 @@
-import { parse as parseMarkdown } from "./marked-renderer.js"
-
 export async function parseContent(content) {
   // Remove properties.
   content = content.replace(/\b[^:\n]+:: [^\n]+/g, "")
-
-  // Handle markdown.
-  content = parseMarkdown(content)
-
-  // Handle LaTex
-  content = content.replaceAll(/(\${1,2})([^\$]+)\1/g, (str, _, expr) => {
-    return parent.window.katex.renderToString(expr, { throwOnError: false })
-  })
 
   // Replace block refs with their content.
   let match
@@ -19,6 +9,7 @@ export async function parseContent(content) {
     const end = start + match[0].length
     const refUUID = match[1]
     const refBlock = await logseq.Editor.getBlock(refUUID)
+    if (refBlock == null) break
     const refContent = await parseContent(refBlock.content)
     content = `${content.substring(0, start)}${refContent}${content.substring(
       end,
@@ -36,9 +27,12 @@ export function buildQuery(q) {
     .map((s) => s.trim())
   const condStr = conds.map((cond, i) => buildCond(cond, i)).join("\n")
   if (!condStr) return []
+  const [tagQ, tag] = buildTagQuery(conds[conds.length - 1])
   return [
     `[:find (pull ?b [*]) :where ${condStr}]`,
     filterIndex > -1 ? q.substring(filterIndex + 1).trim() : null,
+    tagQ,
+    tag,
   ]
 }
 
@@ -48,6 +42,9 @@ function buildCond(cond, i) {
     if (cond[1] === "#") {
       const name = cond.substring(2).toLowerCase()
       return `[?t${i} :block/name "${name}"] [?b :block/path-refs ?t${i}]`
+    } else if (cond[1] === ">") {
+      const name = cond.substring(2).toLowerCase()
+      return `[?t${i} :block/name "${name}"] [?bp :block/refs ?t${i}] [?bp :block/uuid ?uuid] (or [?b :block/uuid ?uuid] [?b :block/parent ?bp])`
     } else {
       const name = cond.substring(1).toLowerCase()
       return `[?t${i} :block/name "${name}"] [?b :block/refs ?t${i}]`
@@ -66,7 +63,7 @@ function buildCond(cond, i) {
         [(contains? ?v${i} "${value}")])`
     }
   } else if (cond.startsWith("[]") || cond.startsWith("【】")) {
-    const status = toStatus(cond.substring(2))
+    const status = toStatus(cond.substring(2).toLowerCase())
     return `[?b :block/marker ?m] (or ${status
       .map((status) => `[(= ?m "${status}")]`)
       .join(" ")})`
@@ -116,4 +113,14 @@ function toStatus(s) {
     }
   }
   return Array.from(ret)
+}
+
+function buildTagQuery(cond) {
+  if (!cond?.startsWith("#")) return []
+  const namePart = cond.replace(/^#(>|#)?/, "").toLowerCase()
+  if (!namePart) return []
+  return [
+    `[:find (pull ?b [:block/name]) :where [?b :block/name ?name] [(clojure.string/includes? ?name "${namePart}")]]`,
+    namePart,
+  ]
 }
