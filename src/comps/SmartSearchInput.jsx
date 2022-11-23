@@ -25,13 +25,13 @@ export default function SmartSearchInput({ onClose }) {
     // console.log(q)
 
     if (!q) {
-      setList([])
-      setTagList([])
+      resetState()
       return
     }
 
-    if (q === lastQ.current && lastResult.current) {
+    if (q === lastQ.current) {
       setList(postProcessResult(lastResult.current, filter))
+      setChosen(0)
       return
     }
 
@@ -60,6 +60,7 @@ export default function SmartSearchInput({ onClose }) {
         }
       }
       setList(postProcessResult(result, filter))
+      setChosen(0)
     } catch (err) {
       console.error(err, q)
     }
@@ -155,9 +156,7 @@ export default function SmartSearchInput({ onClose }) {
     closeCalled.current = true
     onClose(output)
     input.current.value = ""
-    setChosen(0)
-    setList([])
-    setTagList([])
+    resetState()
   }
 
   async function gotoBlock(block, inSidebar = false) {
@@ -221,7 +220,14 @@ export default function SmartSearchInput({ onClose }) {
     )}${tagName}`
     input.current.value = query
     performQuery(query)
+  }
+
+  function resetState() {
     setChosen(0)
+    setList([])
+    setTagList([])
+    lastQ.current = null
+    lastResult.current = []
   }
 
   useEffect(() => {
