@@ -8,7 +8,8 @@ Triggers an input that helps you search various types of data.
 
 - 编辑时，用默认快捷键 `ctrl+space` 呼出，可在设置中更改。
 - `esc` 退出输入框。
-- 可按照标签搜索内容。格式为 `#tag`（或 `##tag` 如要包含它的子块）。
+- 可按照标签搜索内容。格式为 `#tag`，`##tag` 如要包含它的子孙块以及 `#>tag` 如要包含它的子块。
+- 键入部分 tag 名称可弹出对 tag 名的补完。
 - 可搜索拥有某属性的内容。格式为 `@property`。
 - 可按照属性值搜索内容。格式为 `@property: value`。
 - 可搜索各种状态的任务。格式为 `[]nltidwc`。`n`=`NOW`, `l`=`LATER`, `t`=`TODO`, `i`=`DOING`, `d`=`DONE`, `w`=`WAITING`, `c`=`CANCELED`.
@@ -23,7 +24,8 @@ Triggers an input that helps you search various types of data.
 
 - While editing, use the default shortcut key `ctrl+space` to call it out. You can change it in settings.
 - `esc` to close the input.
-- Search by tag. Format `#tag` (or `##tag` to also include it's children).
+- Search by tag. Format `#tag`, `##tag` to also include it's descendants and `#>tag` to also include it's immediate children.
+- Completion of tag names is supported, just type part of the tag.
 - Search by property existence. Format `@property`.
 - Search by property value. Format `@property: value`.
 - Search by task status。Format `[]nltidwc`. `n`=`NOW`, `l`=`LATER`, `t`=`TODO`, `i`=`DOING`, `d`=`DONE`, `w`=`WAITING`, `c`=`CANCELED`.
