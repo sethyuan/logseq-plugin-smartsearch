@@ -14,6 +14,7 @@ export default function SmartSearchInput({ onClose }) {
   const closeCalled = useRef(false)
   const lastQ = useRef()
   const lastResult = useRef([])
+  const lastTagResult = useRef([])
 
   const handleQuery = useCallback(
     debounce((e) => performQuery(e.target.value), 300),
@@ -30,7 +31,12 @@ export default function SmartSearchInput({ onClose }) {
     }
 
     if (q === lastQ.current) {
-      setList(postProcessResult(lastResult.current, filter))
+      if (lastResult.current.length > 0) {
+        setList(postProcessResult(lastResult.current, filter))
+      }
+      if (lastTagResult.current.length > 0) {
+        setTagList(postProcessResult(lastTagResult.current, filter))
+      }
       setChosen(0)
       return
     }
@@ -190,9 +196,12 @@ export default function SmartSearchInput({ onClose }) {
       const result = (await logseq.DB.datascriptQuery(tagQ)).flat()
       // console.log("tag result", result)
       if (result.length === 1 && result[0].name === tag) {
-        setTagList([])
+        const empty = []
+        setTagList(empty)
+        lastTagResult.current = empty
       } else {
         setTagList(postProcessResult(result))
+        lastTagResult.current = result
       }
       setChosen(0)
     } catch (err) {
@@ -228,6 +237,7 @@ export default function SmartSearchInput({ onClose }) {
     setTagList([])
     lastQ.current = null
     lastResult.current = []
+    lastTagResult.current = []
   }
 
   useEffect(() => {
@@ -281,7 +291,9 @@ function postProcessResult(result, filter) {
   // Limit to the first n results.
   return (
     filter
-      ? result.filter(({ content }) => filterMatch(filter, content))
+      ? result.filter(({ content, name }) =>
+          filterMatch(filter, content ?? name),
+        )
       : result
   ).slice(0, 100)
 }
