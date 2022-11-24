@@ -63,10 +63,12 @@ function buildCond(cond, i) {
         [(contains? ?v${i} "${value}")])`
     }
   } else if (cond.startsWith("[]") || cond.startsWith("【】")) {
-    const status = toStatus(cond.substring(2).toLowerCase())
-    return `[?b :block/marker ?m] (or ${status
-      .map((status) => `[(= ?m "${status}")]`)
-      .join(" ")})`
+    const statuses = toStatus(cond.substring(2).toLowerCase())
+    return `[?b :block/marker ?m]${
+      statuses.length > 0
+        ? ` (or ${statuses.map((status) => `[(= ?m "${status}")]`).join(" ")})`
+        : ""
+    }`
   }
 }
 
