@@ -1,3 +1,4 @@
+import { t } from "logseq-l10n"
 import { useCallback, useEffect, useRef, useState } from "preact/hooks"
 import { debounce } from "rambdax"
 import { cls, useCompositionChange } from "reactutils"
@@ -254,6 +255,7 @@ export default function SmartSearchInput({ onClose }) {
         ref={input}
         class="kef-ss-input"
         type="text"
+        placeholder={t("e.g.: #book, @published: 2000; holmes")}
         {...inputProps}
         onKeyDown={onKeyDown}
         onFocus={onFocus}
@@ -283,6 +285,13 @@ export default function SmartSearchInput({ onClose }) {
             </li>
           ))}
       </ul>
+      <div class="kef-ss-inputhint">
+        {list.length === 0
+          ? t("#tag ##tag #>tag @property @property:value []nltidwc ;filter")
+          : parent.document.documentElement.classList.contains("is-mac")
+          ? t("select=ref; ⌥=content; ⇧=goto; ⇧+⌥=sidebar")
+          : t("select=ref; alt=content; shift=goto; shift+alt=sidebar")}
+      </div>
     </div>
   )
 }

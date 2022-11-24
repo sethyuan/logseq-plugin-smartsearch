@@ -73,6 +73,7 @@ function provideStyles() {
       box-shadow: var(--tw-ring-offset-shadow,0 0 #0000),var(--tw-ring-shadow,0 0 #0000),var(--tw-shadow);
       min-width: 350px;
       max-width: 800px;
+      position: relative;
     }
     .kef-ss-input {
       width: 100%;
@@ -86,6 +87,22 @@ function provideStyles() {
       box-shadow: none;
       border-color: inherit;
       border-bottom: 1px solid var(--ls-block-bullet-color);
+    }
+    .kef-ss-input::placeholder {
+      font-size: 0.75em;
+      color: var(--ls-secondary-text-color);
+    }
+    .kef-ss-inputhint {
+      position: absolute;
+      top: 0;
+      left: 0;
+      transform: translateY(-100%);
+      padding-left: 2px;
+      width: max-content;
+      font-size: 0.75em;
+      line-height: 2;
+      color: var(--ls-secondary-text-color);
+      background: var(--ls-primary-background-color);
     }
     .kef-ss-list {
       list-style-type: none;

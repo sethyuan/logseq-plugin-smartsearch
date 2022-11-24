@@ -1,4 +1,8 @@
 {
   "Shortcut key to trigger the smartsearch input.": "触发智能搜索输入框的快捷键。",
-  "Trigger smartsearch input": "触发智能搜索的输入框"
+  "Trigger smartsearch input": "触发智能搜索的输入框",
+  "e.g.: #book, @published: 2000; holmes": "示例：#书，@出版于：2000；福尔摩斯",
+  "#tag ##tag #>tag @property @property:value []nltidwc ;filter": "#标签 ##标签 #>标签 @属性 @属性:值 []nltidwc ;文字过滤",
+  "select=ref; ⌥=content; ⇧=goto; ⇧+⌥=sidebar": "选择=引用；⌥=内容；⇧=跳转；⇧+⌥=侧边栏",
+  "select=ref; alt=content; shift=goto; shift+alt=sidebar": "选择=引用；alt=内容；shift=跳转；shift+alt=侧边栏"
 }
