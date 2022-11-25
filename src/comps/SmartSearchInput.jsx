@@ -256,6 +256,7 @@ export default function SmartSearchInput({ onClose }) {
   }, [chosen])
 
   const inputProps = useCompositionChange(handleQuery)
+  const isMac = parent.document.documentElement.classList.contains("is-mac")
 
   return (
     <div class="kef-ss-container">
@@ -294,11 +295,15 @@ export default function SmartSearchInput({ onClose }) {
           ))}
       </ul>
       <div class="kef-ss-inputhint">
-        {list.length === 0
-          ? t("#tag ##tag #>tag @property @property:value []nltidwc ;filter")
-          : parent.document.documentElement.classList.contains("is-mac")
-          ? t("select=ref; ⌥=content; ⇧=goto; ⇧+⌥=sidebar")
-          : t("select=ref; alt=content; shift=goto; shift+alt=sidebar")}
+        {list.length > 0
+          ? isMac
+            ? t("select=ref; ⌥=content; ⇧=goto; ⇧+⌥=sidebar")
+            : t("select=ref; alt=content; shift=goto; shift+alt=sidebar")
+          : tagList.length > 0
+          ? isMac
+            ? t("select=complete; ⇧=goto; ⇧+⌥=sidebar")
+            : t("select=complete; shift=goto; shift+alt=sidebar")
+          : t("#tag ##tag #>tag @property @property:value []nltidwc ;filter")}
       </div>
     </div>
   )
