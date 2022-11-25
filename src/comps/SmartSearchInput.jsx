@@ -105,7 +105,15 @@ export default function SmartSearchInput({ onClose }) {
           if (!e.shiftKey && !e.ctrlKey && !e.metaKey && !e.altKey) {
             e.preventDefault()
             completeTag(tagList[chosen].name)
+          } else if (e.shiftKey && !e.altKey && !e.metaKey && !e.ctrlKey) {
+            e.preventDefault()
+            gotoBlock(tagList[chosen])
+            outputAndClose()
           }
+        } else if (e.shiftKey && e.altKey && !e.ctrlKey && !e.metaKey) {
+          e.preventDefault()
+          gotoBlock(tagList[chosen], true)
+          outputAndClose()
         }
         break
       }
@@ -178,7 +186,7 @@ export default function SmartSearchInput({ onClose }) {
       if (inSidebar) {
         logseq.Editor.openInRightSidebar(block.uuid)
       } else {
-        logseq.Editor.scrollToBlockInPage(block.uuid)
+        logseq.Editor.scrollToBlockInPage(block.name ?? block.uuid)
       }
     }
   }

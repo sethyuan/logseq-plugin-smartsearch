@@ -122,7 +122,7 @@ function buildTagQuery(cond) {
   const namePart = cond.replace(/^#(>|#)?/, "").toLowerCase()
   if (!namePart) return []
   return [
-    `[:find (pull ?b [:block/name]) :where [?b :block/name ?name] [(clojure.string/includes? ?name "${namePart}")]]`,
+    `[:find (pull ?b [:block/name :block/uuid]) :where [?b :block/name ?name] [(clojure.string/includes? ?name "${namePart}")]]`,
     namePart,
   ]
 }
