@@ -2,7 +2,13 @@ import { t } from "logseq-l10n"
 import { useCallback, useEffect, useRef, useState } from "preact/hooks"
 import { debounce } from "rambdax"
 import { cls, useCompositionChange } from "reactutils"
-import { buildQuery, filterMatch, parseContent } from "../libs/utils"
+import {
+  buildQuery,
+  containsValue,
+  filterMatch,
+  includesValue,
+  parseContent,
+} from "../libs/utils"
 
 const BLUR_WAIT = 100
 
@@ -44,7 +50,9 @@ export default function SmartSearchInput({ onClose }) {
 
     lastQ.current = q
     try {
-      const result = (await logseq.DB.datascriptQuery(q))
+      const result = (
+        await top.logseq.api.datascript_query(q, includesValue, containsValue)
+      )
         .flat()
         .filter((b) => b["pre-block?"] || b.content)
       lastResult.current = result

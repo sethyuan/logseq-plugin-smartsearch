@@ -29,7 +29,7 @@ export function buildQuery(q) {
   if (!condStr) return []
   const [tagQ, tag] = buildTagQuery(conds[conds.length - 1])
   return [
-    `[:find (pull ?b [*]) :where ${condStr}]`,
+    `[:find (pull ?b [*]) :in $ ?includes ?contains :where ${condStr}]`,
     filterIndex > -1 ? q.substring(filterIndex + 1).trim() : null,
     tagQ,
     tag,
@@ -57,10 +57,10 @@ function buildCond(cond, i) {
     if (value == null) {
       return `[?b :block/properties ?bp${i}] [(get ?bp${i} :${name})] (not [?b :block/name])`
     } else {
-      return `[?b :block/properties ?bp${i}] [(get ?bp${i} :${name}) ?v${i}] (not [?b :block/name]) (or-join [?v${i}]
-        [(= ?v${i} "${value}")]
+      return `[?b :block/properties ?bp${i}] [(get ?bp${i} :${name}) ?v${i}] (not [?b :block/name]) (or-join [?includes ?contains ?v${i}]
+        [(?includes ?v${i} "${value}")]
         [(= ?v${i} ${value})]
-        [(contains? ?v${i} "${value}")])`
+        [(?contains ?v${i} "${value}")])`
     }
   } else if (cond.startsWith("[]") || cond.startsWith("【】")) {
     const statuses = toStatus(cond.substring(2).toLowerCase())
@@ -70,6 +70,18 @@ function buildCond(cond, i) {
         : ""
     }`
   }
+}
+
+export function includesValue(prop, val) {
+  if (prop.toLowerCase == null) return false
+  return prop.toLowerCase().includes(val.toLowerCase())
+}
+
+export function containsValue(prop, val) {
+  if (prop["$hash_map$"] == null) return false
+  const lowerVal = val.toLowerCase()
+  const arr = toJS(prop)
+  return arr.some((v) => v.toLowerCase().includes(lowerVal))
 }
 
 export function filterMatch(filter, content) {
@@ -125,4 +137,8 @@ function buildTagQuery(cond) {
     `[:find (pull ?b [:block/name :block/uuid]) :where [?b :block/name ?name] [(clojure.string/includes? ?name "${namePart}")]]`,
     namePart,
   ]
+}
+
+function toJS(map) {
+  return map["$hash_map$"]["$arr$"].filter((s) => s != null)
 }
