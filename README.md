@@ -11,7 +11,7 @@ Triggers an input that helps you search various types of data.
 - 可按照标签搜索内容。格式为 `#tag`，`##tag` 如要包含它的子孙块以及 `#>tag` 如要包含它的子块。
 - 键入部分 tag 名称可弹出对 tag 名的补完。
 - 可搜索拥有某属性的内容。格式为 `@property`。
-- 可按照属性值搜索内容。格式为 `@property: value`。
+- 可按照属性值搜索内容，也可按部分内容搜索。格式为 `@property: value`。
 - 可按照数字属性值搜索内容。格式为 `@property >value`，操作符有 `>` `<` `=` `<=` `>=`。
 - 可按照日期属性值搜索内容。格式为 `@property ~1y`，支持的单位有 `d` `w` `m` `y`，分别是天、周、月和年；操作符有 `~` `-` `+`，分别是“最近”，“以前”，”以后“。
 - 可搜索各种状态的任务。格式为 `[]nltidwc`。`n`=`NOW`, `l`=`LATER`, `t`=`TODO`, `i`=`DOING`, `d`=`DONE`, `w`=`WAITING`, `c`=`CANCELED`.
@@ -29,10 +29,10 @@ Triggers an input that helps you search various types of data.
 - Search by tag. Format `#tag`, `##tag` to also include it's descendants and `#>tag` to also include it's immediate children.
 - Completion of tag names is supported, just type part of the tag.
 - Search by property existence. Format `@property`.
-- Search by property value. Format `@property: value`.
+- Search by property value, can also work with partial value. Format `@property: value`.
 - Search by property value of number type. Format `@property >value`, supported operators are `>` `<` `=` `<=` `>=`.
 - Search by property value of date type. Format `@property ~1y`, supported units are `d` `w` `m` `y`, meaning "days", "weeks", "months" and "years"; supported operators are `~` `-` `+`, meaning "last", "before" and "after".
-- Search by task status。Format `[]nltidwc`. `n`=`NOW`, `l`=`LATER`, `t`=`TODO`, `i`=`DOING`, `d`=`DONE`, `w`=`WAITING`, `c`=`CANCELED`.
+- Search by task status. Format `[]nltidwc`. `n`=`NOW`, `l`=`LATER`, `t`=`TODO`, `i`=`DOING`, `d`=`DONE`, `w`=`WAITING`, `c`=`CANCELED`.
 - Make combinations of tags, properties and tasks, separate them with a `,`. Format `#Book, @published: 2022`.
 - Put a `;` at the end to further filter the results. E.g, `#book; holmes`.
 - Select using keyboard arrow keys or mouse.
