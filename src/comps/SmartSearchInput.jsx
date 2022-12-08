@@ -89,7 +89,7 @@ export default function SmartSearchInput({ onClose }) {
       setList(postProcessResult(result, filter))
       setChosen(0)
     } catch (err) {
-      console.error(err, q)
+      // console.error(err, q)
     }
   }
 
@@ -234,7 +234,7 @@ export default function SmartSearchInput({ onClose }) {
       }
       setChosen(0)
     } catch (err) {
-      console.error(err, tagQ)
+      // console.error(err, tagQ)
     }
   }
 

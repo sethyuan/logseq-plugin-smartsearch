@@ -68,7 +68,7 @@ function buildCond(cond, i) {
     }
   } else if (cond.startsWith("@")) {
     const str = cond.substring(1)
-    const op = str.match(/:|：|\<=|\>=|\>|\<|=|~|～|-|\+/)?.[0]
+    const op = str.match(/:|：|\<=|\>=|\>|\<|=| ~| ～| -| \+/)?.[0]
 
     switch (op) {
       case ":":
@@ -93,8 +93,8 @@ function buildCond(cond, i) {
         if (!value) break
         return `[?b :block/properties ?bp${i}] [(get ?bp${i} :${name}) ?v${i}] (not [?b :block/name]) [(${op} ?v${i} ${value})]`
       }
-      case "~":
-      case "～": {
+      case " ~":
+      case " ～": {
         const [name, dateStr] = str
           .split(op)
           .map((s, i) => (i === 0 ? s.trim().toLowerCase() : s.trim()))
@@ -106,7 +106,7 @@ function buildCond(cond, i) {
           [(get ?bp${i} :${name}) ?v${i}]
           [(?ge ?v${i} ${start})] [(?le ?v${i} ${end})]`
       }
-      case "-": {
+      case " -": {
         const [name, dateStr] = str
           .split(op)
           .map((s, i) => (i === 0 ? s.trim().toLowerCase() : s.trim()))
@@ -118,7 +118,7 @@ function buildCond(cond, i) {
           [(get ?bp${i} :${name}) ?v${i}]
           [(?lt ?v${i} ${refDate})]`
       }
-      case "+": {
+      case " +": {
         const [name, dateStr] = str
           .split(op)
           .map((s, i) => (i === 0 ? s.trim().toLowerCase() : s.trim()))
@@ -158,29 +158,37 @@ export function containsValue(prop, val) {
 }
 
 export function ge(dateSet, val) {
-  const date = convertToDate(dateSet).getTime()
+  const date = convertToDate(dateSet)?.getTime()
+  if (date == null) return false
   return date >= val
 }
 
 export function le(dateSet, val) {
-  const date = convertToDate(dateSet).getTime()
+  const date = convertToDate(dateSet)?.getTime()
+  if (date == null) return false
   return date <= val
 }
 
 export function gt(dateSet, val) {
-  const date = convertToDate(dateSet).getTime()
+  const date = convertToDate(dateSet)?.getTime()
+  if (date == null) return false
   return date > val
 }
 
 export function lt(dateSet, val) {
-  const date = convertToDate(dateSet).getTime()
+  const date = convertToDate(dateSet)?.getTime()
+  if (date == null) return false
   return date < val
 }
 
 function convertToDate(dateSet) {
-  const dateStr = dateSet.$hash_map$.$arr$[0]
-  const date = parse(dateStr, dateFormat, new Date())
-  return date
+  try {
+    const dateStr = dateSet.$hash_map$.$arr$[0]
+    const date = parse(dateStr, dateFormat, new Date())
+    return date
+  } catch (err) {
+    return null
+  }
 }
 
 export function filterMatch(filter, content) {
