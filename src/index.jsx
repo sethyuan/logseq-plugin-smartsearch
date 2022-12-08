@@ -2,6 +2,7 @@ import "@logseq/libs"
 import { setup, t } from "logseq-l10n"
 import { render } from "preact"
 import SmartSearchInput from "./comps/SmartSearchInput"
+import { setDateFormat } from "./libs/utils"
 import zhCN from "./translations/zh-CN.json"
 
 const INPUT_ID = "kef-ss-input"
@@ -13,6 +14,9 @@ let lastBlock
 
 async function main() {
   await setup({ builtinTranslations: { "zh-CN": zhCN } })
+
+  const { preferredDateFormat } = await logseq.App.getUserConfigs()
+  setDateFormat(preferredDateFormat)
 
   provideStyles()
 

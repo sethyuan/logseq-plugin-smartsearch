@@ -1,3 +1,20 @@
+import { addDays, addMonths, addWeeks, addYears, parse } from "date-fns"
+
+const UNITS = new Set(["y", "m", "w", "d"])
+
+const addUnit = {
+  y: addYears,
+  m: addMonths,
+  w: addWeeks,
+  d: addDays,
+}
+
+let dateFormat
+
+export function setDateFormat(value) {
+  dateFormat = value
+}
+
 export async function parseContent(content) {
   // Remove properties.
   content = content.replace(/\b[^:\n]+:: [^\n]+/g, "")
@@ -29,7 +46,7 @@ export function buildQuery(q) {
   if (!condStr) return []
   const [tagQ, tag] = buildTagQuery(conds[conds.length - 1])
   return [
-    `[:find (pull ?b [*]) :in $ ?includes ?contains :where ${condStr}]`,
+    `[:find (pull ?b [*]) :in $ ?includes ?contains ?ge ?le ?gt ?lt :where ${condStr}]`,
     filterIndex > -1 ? q.substring(filterIndex + 1).trim() : null,
     tagQ,
     tag,
@@ -50,18 +67,74 @@ function buildCond(cond, i) {
       return `[?t${i} :block/name "${name}"] [?b :block/refs ?t${i}]`
     }
   } else if (cond.startsWith("@")) {
-    const [name, value] = cond
-      .substring(1)
-      .split(/[:：]/)
-      .map((s, i) => (i === 0 ? s.trim().toLowerCase() : s.trim()))
-    if (value == null) {
-      return `[?b :block/properties ?bp${i}] [(get ?bp${i} :${name})] (not [?b :block/name])`
-    } else {
-      return `[?b :block/properties ?bp${i}] [(get ?bp${i} :${name}) ?v${i}] (not [?b :block/name]) (or-join [?includes ?contains ?v${i}]
-        [(?includes ?v${i} "${value}")]
-        [(= ?v${i} ${value})]
-        [(?contains ?v${i} "${value}")])`
+    const str = cond.substring(1)
+    const op = str.match(/:|：|\<=|\>=|\>|\<|=|~|～|-|\+/)?.[0]
+
+    switch (op) {
+      case ":":
+      case "：": {
+        const [name, value] = str
+          .split(op)
+          .map((s, i) => (i === 0 ? s.trim().toLowerCase() : s.trim()))
+        if (!value) break
+        return `[?b :block/properties ?bp${i}] [(get ?bp${i} :${name}) ?v${i}] (not [?b :block/name]) (or-join [?includes ?contains ?v${i}]
+          [(?includes ?v${i} "${value}")]
+          [(= ?v${i} ${value})]
+          [(?contains ?v${i} "${value}")])`
+      }
+      case "=":
+      case "<":
+      case ">":
+      case ">=":
+      case "<=": {
+        const [name, value] = str
+          .split(op)
+          .map((s, i) => (i === 0 ? s.trim().toLowerCase() : s.trim()))
+        if (!value) break
+        return `[?b :block/properties ?bp${i}] [(get ?bp${i} :${name}) ?v${i}] (not [?b :block/name]) [(${op} ?v${i} ${value})]`
+      }
+      case "~":
+      case "～": {
+        const [name, dateStr] = str
+          .split(op)
+          .map((s, i) => (i === 0 ? s.trim().toLowerCase() : s.trim()))
+        if (!dateStr || dateStr.length < 2) break
+        const [start, end] = lastDates(dateStr)
+        if (start == null || end == null) break
+        return `[?b :block/properties ?bp${i}]
+          (not [?b :block/name])
+          [(get ?bp${i} :${name}) ?v${i}]
+          [(?ge ?v${i} ${start})] [(?le ?v${i} ${end})]`
+      }
+      case "-": {
+        const [name, dateStr] = str
+          .split(op)
+          .map((s, i) => (i === 0 ? s.trim().toLowerCase() : s.trim()))
+        if (!dateStr || dateStr.length < 2) break
+        const refDate = pastDate(dateStr)
+        if (refDate == null) break
+        return `[?b :block/properties ?bp${i}]
+          (not [?b :block/name])
+          [(get ?bp${i} :${name}) ?v${i}]
+          [(?lt ?v${i} ${refDate})]`
+      }
+      case "+": {
+        const [name, dateStr] = str
+          .split(op)
+          .map((s, i) => (i === 0 ? s.trim().toLowerCase() : s.trim()))
+        if (!dateStr || dateStr.length < 2) break
+        const refDate = futureDate(dateStr)
+        if (refDate == null) break
+        return `[?b :block/properties ?bp${i}]
+          (not [?b :block/name])
+          [(get ?bp${i} :${name}) ?v${i}]
+          [(?gt ?v${i} ${refDate})]`
+      }
+      default:
+        break
     }
+
+    return `[?b :block/properties ?bp${i}] [(get ?bp${i} :${str})] (not [?b :block/name])`
   } else if (cond.startsWith("[]") || cond.startsWith("【】")) {
     const statuses = toStatus(cond.substring(2).toLowerCase())
     return `[?b :block/marker ?m]${
@@ -78,10 +151,36 @@ export function includesValue(prop, val) {
 }
 
 export function containsValue(prop, val) {
-  if (prop["$hash_map$"] == null) return false
+  if (prop.$hash_map$ == null) return false
   const lowerVal = val.toLowerCase()
   const arr = toJS(prop)
   return arr.some((v) => v.toLowerCase().includes(lowerVal))
+}
+
+export function ge(dateSet, val) {
+  const date = convertToDate(dateSet).getTime()
+  return date >= val
+}
+
+export function le(dateSet, val) {
+  const date = convertToDate(dateSet).getTime()
+  return date <= val
+}
+
+export function gt(dateSet, val) {
+  const date = convertToDate(dateSet).getTime()
+  return date > val
+}
+
+export function lt(dateSet, val) {
+  const date = convertToDate(dateSet).getTime()
+  return date < val
+}
+
+function convertToDate(dateSet) {
+  const dateStr = dateSet.$hash_map$.$arr$[0]
+  const date = parse(dateStr, dateFormat, new Date())
+  return date
 }
 
 export function filterMatch(filter, content) {
@@ -140,5 +239,30 @@ function buildTagQuery(cond) {
 }
 
 function toJS(map) {
-  return map["$hash_map$"]["$arr$"].filter((s) => s != null)
+  return map.$hash_map$.$arr$.filter((s) => s != null)
+}
+
+function lastDates(dateStr) {
+  const quantity = +dateStr.substring(0, dateStr.length - 1)
+  const unit = dateStr[dateStr.length - 1]
+  if (isNaN(quantity) || !UNITS.has(unit)) return []
+  const today = new Date()
+  const start = addUnit[unit](today, -quantity)
+  return [start.getTime(), today.getTime()]
+}
+
+function pastDate(dateStr) {
+  const quantity = +dateStr.substring(0, dateStr.length - 1)
+  const unit = dateStr[dateStr.length - 1]
+  if (isNaN(quantity) || !UNITS.has(unit)) return null
+  const ret = addUnit[unit](new Date(), -quantity)
+  return ret.getTime()
+}
+
+function futureDate(dateStr) {
+  const quantity = +dateStr.substring(0, dateStr.length - 1)
+  const unit = dateStr[dateStr.length - 1]
+  if (isNaN(quantity) || !UNITS.has(unit)) return null
+  const ret = addUnit[unit](new Date(), quantity)
+  return ret.getTime()
 }

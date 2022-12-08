@@ -6,7 +6,11 @@ import {
   buildQuery,
   containsValue,
   filterMatch,
+  ge,
+  gt,
   includesValue,
+  le,
+  lt,
   parseContent,
 } from "../libs/utils"
 
@@ -51,7 +55,15 @@ export default function SmartSearchInput({ onClose }) {
     lastQ.current = q
     try {
       const result = (
-        await top.logseq.api.datascript_query(q, includesValue, containsValue)
+        await top.logseq.api.datascript_query(
+          q,
+          includesValue,
+          containsValue,
+          ge,
+          le,
+          gt,
+          lt,
+        )
       )
         .flat()
         .filter((b) => b["pre-block?"] || b.content)
@@ -311,7 +323,9 @@ export default function SmartSearchInput({ onClose }) {
           ? isMac
             ? t("select=complete; ⇧=goto; ⇧+⌥=sidebar")
             : t("select=complete; shift=goto; shift+alt=sidebar")
-          : t("#tag ##tag #>tag @property @property:value []nltidwc ;filter")}
+          : t(
+              "#tag ##tag #>tag @property @property:value @property[=<>]1 @property[~-+]1w []nltidwc ;filter",
+            )}
       </div>
     </div>
   )
