@@ -151,10 +151,9 @@ export function includesValue(prop, val) {
 }
 
 export function containsValue(prop, val) {
-  if (prop.$hash_map$ == null) return false
+  if (!Array.isArray(prop)) return false
   const lowerVal = val.toLowerCase()
-  const arr = toJS(prop)
-  return arr.some((v) => v.toLowerCase().includes(lowerVal))
+  return prop.some((v) => v.toLowerCase().includes(lowerVal))
 }
 
 export function ge(dateSet, val) {
@@ -183,7 +182,7 @@ export function lt(dateSet, val) {
 
 function convertToDate(dateSet) {
   try {
-    const dateStr = dateSet.$hash_map$.$arr$[0]
+    const dateStr = dateSet[0]
     const date = parse(dateStr, dateFormat, new Date())
     return date
   } catch (err) {
@@ -244,10 +243,6 @@ function buildTagQuery(cond) {
     `[:find (pull ?b [:block/name :block/uuid]) :where [?b :block/name ?name] [(clojure.string/includes? ?name "${namePart}")]]`,
     namePart,
   ]
-}
-
-function toJS(map) {
-  return map.$hash_map$.$arr$.filter((s) => s != null)
 }
 
 function lastDates(dateStr) {
