@@ -190,7 +190,7 @@ function convertToDate(dateSet) {
   }
 }
 
-export function filterMatch(filter, content) {
+function filterMatch(filter, content) {
   if (!filter) return true
   if (!content) return false
   for (let i = 0, j = 0; i < content.length && j < filter.length; i++) {
@@ -201,6 +201,17 @@ export function filterMatch(filter, content) {
     if (j >= filter.length) return true
   }
   return false
+}
+
+export function postProcessResult(result, filter, limit = 100) {
+  // Limit to the first n results.
+  return (
+    filter
+      ? result.filter(({ content, name }) =>
+          filterMatch(filter, content ?? name),
+        )
+      : result
+  ).slice(0, limit)
 }
 
 function toStatus(s) {

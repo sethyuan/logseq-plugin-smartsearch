@@ -5,13 +5,13 @@ import { cls, useCompositionChange } from "reactutils"
 import {
   buildQuery,
   containsValue,
-  filterMatch,
   ge,
   gt,
   includesValue,
   le,
   lt,
   parseContent,
+  postProcessResult,
 } from "../libs/utils"
 
 const BLUR_WAIT = 100
@@ -329,15 +329,4 @@ export default function SmartSearchInput({ onClose }) {
       </div>
     </div>
   )
-}
-
-function postProcessResult(result, filter) {
-  // Limit to the first n results.
-  return (
-    filter
-      ? result.filter(({ content, name }) =>
-          filterMatch(filter, content ?? name),
-        )
-      : result
-  ).slice(0, 100)
 }

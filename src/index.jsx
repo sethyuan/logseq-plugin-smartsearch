@@ -2,7 +2,18 @@ import "@logseq/libs"
 import { setup, t } from "logseq-l10n"
 import { render } from "preact"
 import SmartSearchInput from "./comps/SmartSearchInput"
-import { setDateFormat } from "./libs/utils"
+import {
+  buildQuery,
+  containsValue,
+  ge,
+  gt,
+  includesValue,
+  le,
+  lt,
+  parseContent,
+  postProcessResult,
+  setDateFormat,
+} from "./libs/utils"
 import zhCN from "./translations/zh-CN.json"
 
 const INPUT_ID = "kef-ss-input"
@@ -57,6 +68,70 @@ async function main() {
     inputContainerParent = inputContainer.parentNode
     render(<SmartSearchInput onClose={closeInput} />, inputContainer)
   }, 0)
+
+  logseq.App.registerSearchService({
+    name: "Smart Search",
+    async onQuery(graph, key, opts) {
+      const [q, filter, tagQ, tag] = buildQuery(key)
+
+      try {
+        const result = (
+          await top.logseq.api.datascript_query(
+            q,
+            includesValue,
+            containsValue,
+            ge,
+            le,
+            gt,
+            lt,
+          )
+        )
+          .flat()
+          .filter((b) => b["pre-block?"] || b.content)
+
+        if (result.length > 0) {
+          for (const block of result) {
+            if (block["pre-block?"]) {
+              const page = await logseq.Editor.getPage(block.page.id)
+              block.name = page.name
+            } else if (block.content) {
+              block.content = await parseContent(block.content)
+            }
+          }
+          const list = postProcessResult(result, filter)
+          return {
+            graph,
+            key,
+            blocks: list.filter((block) => !block.name),
+            pages: list
+              .filter((block) => block.name)
+              .map((block) => block.name),
+          }
+        } else {
+          try {
+            const tagResult = (await logseq.DB.datascriptQuery(tagQ)).flat()
+            if (
+              tagResult.length > 0 &&
+              !(tagResult.length === 1 && tagResult[0].name === tag)
+            ) {
+              const list = postProcessResult(tagResult)
+              return {
+                graph,
+                key,
+                pages: list.map((page) => page.name),
+              }
+            }
+          } catch (err) {
+            // console.error(err, key)
+          }
+        }
+      } catch (err) {
+        // console.error(err, key)
+      }
+
+      return { graph, key }
+    },
+  })
 
   // logseq.beforeunload(() => {})
 
