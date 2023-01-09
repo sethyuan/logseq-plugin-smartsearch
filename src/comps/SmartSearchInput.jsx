@@ -129,11 +129,11 @@ export default function SmartSearchInput({ onClose }) {
             e.preventDefault()
             gotoBlock(tagList[chosen])
             outputAndClose()
+          } else if (e.shiftKey && e.altKey && !e.metaKey && !e.ctrlKey) {
+            e.preventDefault()
+            gotoBlock(tagList[chosen], true)
+            outputAndClose()
           }
-        } else if (e.shiftKey && e.altKey && !e.ctrlKey && !e.metaKey) {
-          e.preventDefault()
-          gotoBlock(tagList[chosen], true)
-          outputAndClose()
         }
         break
       }
@@ -171,6 +171,20 @@ export default function SmartSearchInput({ onClose }) {
     } else if (e.shiftKey && e.altKey && !e.ctrlKey && !e.metaKey) {
       gotoBlock(block, true)
       outputAndClose()
+    }
+  }
+
+  function chooseForTag(e, tag) {
+    e.stopPropagation()
+    e.preventDefault()
+    if (e.shiftKey && !e.metaKey && !e.ctrlKey && !e.altKey) {
+      gotoBlock(tag)
+      outputAndClose()
+    } else if (e.shiftKey && e.altKey && !e.ctrlKey && !e.metaKey) {
+      gotoBlock(tag, true)
+      outputAndClose()
+    } else {
+      completeTag(tag.name, true)
     }
   }
 
@@ -307,7 +321,7 @@ export default function SmartSearchInput({ onClose }) {
             <li
               key={tag.name}
               class={cls("kef-ss-listitem", i === chosen && "kef-ss-chosen")}
-              onClick={() => completeTag(tag.name, true)}
+              onClick={(e) => chooseForTag(e, tag)}
             >
               <span class="kef-ss-tagicon">T</span>
               <span>{tag.name}</span>
