@@ -39,10 +39,14 @@ export async function parseContent(content) {
 export function buildQuery(q) {
   if (!q) return []
   const filterIndex = Math.max(q.lastIndexOf(";"), q.lastIndexOf("；"))
+  const filter = filterIndex > -1 ? q.substring(filterIndex + 1).trim() : null
   const conds = (filterIndex > -1 ? q.substring(0, filterIndex) : q)
     .split(/[,，]/)
     .map((s) => s.trim())
-  const condStr = conds.map((cond, i) => buildCond(cond, i)).join("\n")
+  const condStr =
+    filterIndex === 0 && filter
+      ? `[?b :block/content ?c] [(?includes ?c "${filter}")]`
+      : conds.map((cond, i) => buildCond(cond, i)).join("\n")
   if (!condStr) return []
   const [tagQ, tag] = buildTagQuery(conds[conds.length - 1])
   return [
