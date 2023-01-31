@@ -17,6 +17,7 @@ Triggers an input that helps you search various types of data.
 - 可搜索各种状态的任务。格式为 `[]nltidwc`。`n`=`NOW`, `l`=`LATER`, `t`=`TODO`, `i`=`DOING`, `d`=`DONE`, `w`=`WAITING`, `c`=`CANCELED`.
 - 可任意组合标签、属性、任务搜索内容，以 `,` 分割。格式为 `#Book, @published: 2022`。
 - 可在最后加 `;` 进一步过滤查询结果。例如：`#book; holmes`。
+- 可全文检索。格式为以 `;` 开头，例如：`;holmes`。
 - 能识别中文标点，不用刻意切换到英文。
 - 支持键盘上下键选择或鼠标点击。
 - 正常选择（回车或鼠标点击）插入引用，按住 `opt` 或 `alt` 选择插入文字内容。
@@ -35,6 +36,7 @@ Triggers an input that helps you search various types of data.
 - Search by task status. Format `[]nltidwc`. `n`=`NOW`, `l`=`LATER`, `t`=`TODO`, `i`=`DOING`, `d`=`DONE`, `w`=`WAITING`, `c`=`CANCELED`.
 - Make combinations of tags, properties and tasks, separate them with a `,`. Format `#Book, @published: 2022`.
 - Put a `;` at the end to further filter the results. E.g, `#book; holmes`.
+- Begin with a `;` to search by text. E.g, `;holmes`.
 - Select using keyboard arrow keys or mouse.
 - Select (Enter or click) to insert reference, hold `opt` or `alt` and select to insert text content.
 - Hold `shift` and select to go to the page or block，hold `shift+alt` and select to open the page or block in the right sidebar.
