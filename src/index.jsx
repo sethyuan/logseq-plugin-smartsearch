@@ -51,7 +51,7 @@ async function main() {
       {
         key: "trigger-input",
         label: t("Trigger smartsearch input"),
-        keybinding: { binding: logseq.settings?.shortcut },
+        keybinding: { binding: logseq.settings.shortcut },
       },
       triggerInput,
     )
@@ -214,7 +214,15 @@ function provideStyles() {
   `)
 }
 
-async function triggerInput() {
+function triggerInput() {
+  if (inputContainer.style.display === "block") {
+    closeInput()
+  } else {
+    openInput()
+  }
+}
+
+async function openInput() {
   textarea = parent.document.activeElement
   const editor = textarea.closest(".block-editor")
   if (editor) {

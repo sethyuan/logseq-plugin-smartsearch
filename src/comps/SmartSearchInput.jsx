@@ -94,10 +94,10 @@ export default function SmartSearchInput({ onClose }) {
   }
 
   function onKeyDown(e) {
-    e.stopPropagation()
     switch (e.key) {
       case "Escape": {
         if (!e.shiftKey && !e.ctrlKey && !e.metaKey && !e.altKey) {
+          e.stopPropagation()
           e.preventDefault()
           outputAndClose()
         }
@@ -107,29 +107,36 @@ export default function SmartSearchInput({ onClose }) {
         if (e.isComposing) return
         if (list.length > 0) {
           if (!e.shiftKey && !e.ctrlKey && !e.metaKey && !e.altKey) {
+            e.stopPropagation()
             e.preventDefault()
             outputRef(list[chosen])
           } else if (e.altKey && !e.shiftKey && !e.metaKey && !e.ctrlKey) {
+            e.stopPropagation()
             e.preventDefault()
             outputContent(list[chosen])
           } else if (e.shiftKey && !e.ctrlKey && !e.metaKey && !e.altKey) {
+            e.stopPropagation()
             e.preventDefault()
             gotoBlock(list[chosen])
             outputAndClose()
           } else if (e.shiftKey && e.altKey && !e.ctrlKey && !e.metaKey) {
+            e.stopPropagation()
             e.preventDefault()
             gotoBlock(list[chosen], true)
             outputAndClose()
           }
         } else if (tagList.length > 0) {
           if (!e.shiftKey && !e.ctrlKey && !e.metaKey && !e.altKey) {
+            e.stopPropagation()
             e.preventDefault()
             completeTag(tagList[chosen].name)
           } else if (e.shiftKey && !e.altKey && !e.metaKey && !e.ctrlKey) {
+            e.stopPropagation()
             e.preventDefault()
             gotoBlock(tagList[chosen])
             outputAndClose()
           } else if (e.shiftKey && e.altKey && !e.metaKey && !e.ctrlKey) {
+            e.stopPropagation()
             e.preventDefault()
             gotoBlock(tagList[chosen], true)
             outputAndClose()
@@ -138,6 +145,7 @@ export default function SmartSearchInput({ onClose }) {
         break
       }
       case "ArrowDown": {
+        e.stopPropagation()
         e.preventDefault()
         const len = list.length || tagList.length
         if (len > 0) {
@@ -146,6 +154,7 @@ export default function SmartSearchInput({ onClose }) {
         break
       }
       case "ArrowUp": {
+        e.stopPropagation()
         e.preventDefault()
         const len = list.length || tagList.length
         if (len > 0) {
@@ -154,6 +163,9 @@ export default function SmartSearchInput({ onClose }) {
         break
       }
       default:
+        if (!e.shiftKey && !e.ctrlKey && !e.metaKey && !e.altKey) {
+          e.stopPropagation()
+        }
         break
     }
   }
