@@ -38,6 +38,12 @@ async function main() {
       default: "ctrl+space",
       description: t("Shortcut key to trigger the smartsearch input."),
     },
+    {
+      key: "enableSearchProvider",
+      type: "boolean",
+      default: false,
+      description: t("Whether to enable the search provider integration."),
+    },
   ])
 
   logseq.provideUI({
@@ -69,69 +75,71 @@ async function main() {
     render(<SmartSearchInput onClose={closeInput} />, inputContainer)
   }, 0)
 
-  logseq.App.registerSearchService({
-    name: "Smart Search",
-    async onQuery(graph, key, opts) {
-      const [q, filter, tagQ, tag] = buildQuery(key)
+  if (logseq.settings?.enableSearchProvider) {
+    logseq.App.registerSearchService({
+      name: "Smart Search",
+      async onQuery(graph, key, opts) {
+        const [q, filter, tagQ, tag] = buildQuery(key)
 
-      try {
-        const result = (
-          await top.logseq.api.datascript_query(
-            q,
-            includesValue,
-            containsValue,
-            ge,
-            le,
-            gt,
-            lt,
+        try {
+          const result = (
+            await top.logseq.api.datascript_query(
+              q,
+              includesValue,
+              containsValue,
+              ge,
+              le,
+              gt,
+              lt,
+            )
           )
-        )
-          .flat()
-          .filter((b) => b["pre-block?"] || b.content)
+            .flat()
+            .filter((b) => b["pre-block?"] || b.content)
 
-        if (result.length > 0) {
-          for (const block of result) {
-            if (block["pre-block?"]) {
-              const page = await logseq.Editor.getPage(block.page.id)
-              block.name = page.name
-            } else if (block.content) {
-              block.content = await parseContent(block.content)
-            }
-          }
-          const list = postProcessResult(result, filter)
-          return {
-            graph,
-            key,
-            blocks: list.filter((block) => !block.name),
-            pages: list
-              .filter((block) => block.name)
-              .map((block) => block.name),
-          }
-        } else {
-          try {
-            const tagResult = (await logseq.DB.datascriptQuery(tagQ)).flat()
-            if (
-              tagResult.length > 0 &&
-              !(tagResult.length === 1 && tagResult[0].name === tag)
-            ) {
-              const list = postProcessResult(tagResult)
-              return {
-                graph,
-                key,
-                pages: list.map((page) => page.name),
+          if (result.length > 0) {
+            for (const block of result) {
+              if (block["pre-block?"]) {
+                const page = await logseq.Editor.getPage(block.page.id)
+                block.name = page.name
+              } else if (block.content) {
+                block.content = await parseContent(block.content)
               }
             }
-          } catch (err) {
-            // console.error(err, key)
+            const list = postProcessResult(result, filter)
+            return {
+              graph,
+              key,
+              blocks: list.filter((block) => !block.name),
+              pages: list
+                .filter((block) => block.name)
+                .map((block) => block.name),
+            }
+          } else {
+            try {
+              const tagResult = (await logseq.DB.datascriptQuery(tagQ)).flat()
+              if (
+                tagResult.length > 0 &&
+                !(tagResult.length === 1 && tagResult[0].name === tag)
+              ) {
+                const list = postProcessResult(tagResult)
+                return {
+                  graph,
+                  key,
+                  pages: list.map((page) => page.name),
+                }
+              }
+            } catch (err) {
+              // console.error(err, key)
+            }
           }
+        } catch (err) {
+          // console.error(err, key)
         }
-      } catch (err) {
-        // console.error(err, key)
-      }
 
-      return { graph, key }
-    },
-  })
+        return { graph, key }
+      },
+    })
+  }
 
   // logseq.beforeunload(() => {})
 
