@@ -19,7 +19,7 @@ Triggers an input that helps you search various types of data.
 - Put a `;` at the end to further filter the results. E.g, `#book; holmes`.
 - Begin with a `;` to search by text. E.g, `;holmes`.
 - Select using keyboard arrow keys or mouse.
-- Select (Enter or click) to insert reference, hold `opt` or `alt` and select to insert text content.
+- Select (Enter or click) to insert reference, hold `cmd` or `ctrl` to insert embeds, hold `opt` or `alt` to insert text content.
 - Hold `shift` and select to go to the page or block，hold `shift+alt` and select to open the page or block in the right sidebar.
 
 ## Usage
