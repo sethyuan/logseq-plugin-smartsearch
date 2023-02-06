@@ -124,6 +124,14 @@ export default function SmartSearchInput({ onClose }) {
             e.preventDefault()
             gotoBlock(list[chosen], true)
             outputAndClose()
+          } else if (
+            isMac
+              ? e.metaKey && !e.shiftKey && !e.ctrlKey && !e.altKey
+              : e.ctrlKey && !e.metaKey && !e.shiftKey && !e.altKey
+          ) {
+            e.stopPropagation()
+            e.preventDefault()
+            outputEmbed(list[chosen])
           }
         } else if (tagList.length > 0) {
           if (!e.shiftKey && !e.ctrlKey && !e.metaKey && !e.altKey) {
@@ -187,6 +195,12 @@ export default function SmartSearchInput({ onClose }) {
     } else if (e.shiftKey && e.altKey && !e.ctrlKey && !e.metaKey) {
       gotoBlock(block, true)
       outputAndClose()
+    } else if (
+      isMac
+        ? e.metaKey && !e.shiftKey && !e.ctrlKey && !e.altKey
+        : e.ctrlKey && !e.metaKey && !e.shiftKey && !e.altKey
+    ) {
+      outputEmbed(block)
     }
   }
 
@@ -209,6 +223,14 @@ export default function SmartSearchInput({ onClose }) {
       outputAndClose(`[[${block.content}]]`)
     } else {
       outputAndClose(`((${block.uuid}))`)
+    }
+  }
+
+  function outputEmbed(block) {
+    if (block["pre-block?"]) {
+      outputAndClose(`{{embed [[${block.content}]]}}`)
+    } else {
+      outputAndClose(`{{embed ((${block.uuid}))}}`)
     }
   }
 
@@ -308,6 +330,8 @@ export default function SmartSearchInput({ onClose }) {
   const inputProps = useCompositionChange(handleQuery)
   const isMac = parent.document.documentElement.classList.contains("is-mac")
 
+  const stopPropagation = useCallback((e) => e.stopPropagation(), [])
+
   return (
     <div class="kef-ss-container">
       <input
@@ -325,6 +349,7 @@ export default function SmartSearchInput({ onClose }) {
           <li
             key={block.uuid}
             class={cls("kef-ss-listitem", i === chosen && "kef-ss-chosen")}
+            onMouseDown={stopPropagation}
             onClick={(e) => chooseOutput(e, block)}
           >
             {block.content.split("\n").map((line) => (
@@ -347,8 +372,10 @@ export default function SmartSearchInput({ onClose }) {
       <div class="kef-ss-inputhint">
         {list.length > 0
           ? isMac
-            ? t("select=ref; ⌥=content; ⇧=goto; ⇧+⌥=sidebar")
-            : t("select=ref; alt=content; shift=goto; shift+alt=sidebar")
+            ? t("select=ref; ⌘=embed; ⌥=content; ⇧=goto; ⇧+⌥=sidebar")
+            : t(
+                "select=ref; ctrl=embed; alt=content; shift=goto; shift+alt=sidebar",
+              )
           : tagList.length > 0
           ? isMac
             ? t("select=complete; ⇧=goto; ⇧+⌥=sidebar")

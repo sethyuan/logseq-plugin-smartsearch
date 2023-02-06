@@ -4,8 +4,8 @@
   "Trigger smartsearch input": "触发智能搜索的输入框",
   "e.g.: #book, @published: 2000; holmes": "示例：#书，@出版于：2000；福尔摩斯",
   "#tag ##tag #>tag @property @property:value @property[=<>]1 @property[~-+]1w []nltidwc ;filter": "#标签 ##标签 #>标签 @属性 @属性:值 @属性[=<>]1 @属性[~-+]1w []nltidwc ;文字过滤",
-  "select=ref; ⌥=content; ⇧=goto; ⇧+⌥=sidebar": "选择=引用；⌥=内容；⇧=跳转；⇧+⌥=侧边栏",
-  "select=ref; alt=content; shift=goto; shift+alt=sidebar": "选择=引用；alt=内容；shift=跳转；shift+alt=侧边栏",
+  "select=ref; ⌘=embed; ⌥=content; ⇧=goto; ⇧+⌥=sidebar": "选择=引用；⌘=嵌入；⌥=内容；⇧=跳转；⇧+⌥=侧边栏",
+  "select=ref; ctrl=embed; alt=content; shift=goto; shift+alt=sidebar": "选择=引用；ctrl=嵌入；alt=内容；shift=跳转；shift+alt=侧边栏",
   "select=complete; ⇧=goto; ⇧+⌥=sidebar": "选择=上屏；⇧=跳转；⇧+⌥=侧边栏",
   "select=complete; shift=goto; shift+alt=sidebar": "选择=上屏；shift=跳转；shift+alt=侧边栏"
 }
