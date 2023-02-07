@@ -11,13 +11,15 @@ Triggers an input that helps you search various types of data.
 - Search by tag. Format `#tag`, `##tag` to also include it's descendants and `#>tag` to also include it's immediate children.
 - Completion of tag names is supported, just type part of the tag.
 - Search by property existence. Format `@property`.
+- Search by property non-existence. Format `@!property`.
 - Search by property value, can also work with partial value. Format `@property: value`.
+- Search blocks without a specified property-value. Format `@!property: value`.
 - Search by property value of number type. Format `@property >value`, supported operators are `>` `<` `=` `<=` `>=`.
 - Search by property value of date type. Format `@property ~1y`, supported units are `d` `w` `m` `y`, meaning "days", "weeks", "months" and "years"; supported operators are `~` `-` `+`, meaning "last", "before" and "after".
 - Search by task status. Format `[]nltidwc`. `n`=`NOW`, `l`=`LATER`, `t`=`TODO`, `i`=`DOING`, `d`=`DONE`, `w`=`WAITING`, `c`=`CANCELED`.
-- Make combinations of tags, properties and tasks, separate them with a `,`. Format `#Book, @published: 2022`.
+- Full text search. E.g, `learning note`.
+- Make combinations of text, tags, properties and tasks, separate them with a `,`. Format `#Book, @published: 2022`.
 - Put a `;` at the end to further filter the results. E.g, `#book; holmes`.
-- Begin with a `;` to search by text. E.g, `;holmes`.
 - Select using keyboard arrow keys or mouse.
 - Select (Enter or click) to insert reference, hold `cmd` or `ctrl` to insert embeds, hold `opt` or `alt` to insert text content.
 - Hold `shift` and select to go to the page or block，hold `shift+alt` and select to open the page or block in the right sidebar.

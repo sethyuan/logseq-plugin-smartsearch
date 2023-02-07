@@ -381,7 +381,7 @@ export default function SmartSearchInput({ onClose }) {
             ? t("select=complete; ⇧=goto; ⇧+⌥=sidebar")
             : t("select=complete; shift=goto; shift+alt=sidebar")
           : t(
-              "#tag ##tag #>tag @property @property:value @property[=<>]1 @property[~-+]1w []nltidwc ;filter",
+              "#tag ##tag #>tag @[!]property @[!]property:value @property[=<>]1 @property[~-+]1w []nltidwc ;filter",
             )}
       </div>
     </div>

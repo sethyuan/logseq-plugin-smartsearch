@@ -43,23 +43,24 @@ export function buildQuery(q) {
   const conds = (filterIndex > -1 ? q.substring(0, filterIndex) : q)
     .split(/[,，]/)
     .map((s) => s.trim())
-  const condStr =
-    filterIndex === 0 && filter
-      ? `[?b :block/content ?c] [(?includes ?c "${filter}")]`
-      : conds.map((cond, i) => buildCond(cond, i)).join("\n")
+  const condStr = conds
+    .map((cond, i) => buildCond(cond, i))
+    .join("\n")
+    .trim()
   if (!condStr) return []
   const [tagQ, tag] = buildTagQuery(conds[conds.length - 1])
   return [
     `[:find (pull ?b [*]) :in $ ?includes ?contains ?ge ?le ?gt ?lt :where ${condStr}]`,
-    filterIndex > -1 ? q.substring(filterIndex + 1).trim() : null,
+    filter,
     tagQ,
     tag,
   ]
 }
 
 function buildCond(cond, i) {
-  if (cond.length <= 1) return ""
+  if (cond.length < 1) return ""
   if (cond.startsWith("#")) {
+    if (cond.length < 2) return ""
     if (cond[1] === "#") {
       const name = cond.substring(2).toLowerCase()
       return `[?t${i} :block/name "${name}"] [?b :block/path-refs ?t${i}]`
@@ -70,10 +71,10 @@ function buildCond(cond, i) {
       const name = cond.substring(1).toLowerCase()
       return `[?t${i} :block/name "${name}"] [?b :block/refs ?t${i}]`
     }
-  } else if (cond.startsWith("@")) {
-    const str = cond.substring(1)
-    const op = str.match(/:|：|\<=|\>=|\>|\<|=| ~| ～| -| \+/)?.[0]
-
+  } else if (cond.startsWith("@!") || cond.startsWith("@！")) {
+    if (cond.length < 3) return ""
+    const str = cond.substring(2)
+    const op = str.match(/:|：/)?.[0]
     switch (op) {
       case ":":
       case "：": {
@@ -81,7 +82,27 @@ function buildCond(cond, i) {
           .split(op)
           .map((s, i) => (i === 0 ? s.trim().toLowerCase() : s.trim()))
         if (!value) break
-        return `[?b :block/properties ?bp${i}] [(get ?bp${i} :${name}) ?v${i}] (not [?b :block/name]) (or-join [?includes ?contains ?v${i}]
+        return `[?b :block/content] (not-join [?b ?includes ?contains] [?b :block/properties ?bp${i}] [(get ?bp${i} :${name}) ?v${i}] (or-join [?includes ?contains ?v${i}]
+          [(?includes ?v${i} "${value}")]
+          [(= ?v${i} ${value})]
+          [(?contains ?v${i} "${value}")]))`
+      }
+      default:
+        break
+    }
+    return `[?b :block/content] (not-join [?b] [?b :block/properties ?bp${i}] [(get ?bp${i} :${str})])`
+  } else if (cond.startsWith("@")) {
+    if (cond.length < 2) return ""
+    const str = cond.substring(1)
+    const op = str.match(/:|：|\<=|\>=|\>|\<|=| ~| ～| -| \+/)?.[0]
+    switch (op) {
+      case ":":
+      case "：": {
+        const [name, value] = str
+          .split(op)
+          .map((s, i) => (i === 0 ? s.trim().toLowerCase() : s.trim()))
+        if (!value) break
+        return `[?b :block/properties ?bp${i}] [(get ?bp${i} :${name}) ?v${i}] [?b :block/content] (or-join [?includes ?contains ?v${i}]
           [(?includes ?v${i} "${value}")]
           [(= ?v${i} ${value})]
           [(?contains ?v${i} "${value}")])`
@@ -137,15 +158,18 @@ function buildCond(cond, i) {
       default:
         break
     }
-
-    return `[?b :block/properties ?bp${i}] [(get ?bp${i} :${str})] (not [?b :block/name])`
+    return `[?b :block/properties ?bp${i}] [(get ?bp${i} :${str})] [?b :block/content]`
   } else if (cond.startsWith("[]") || cond.startsWith("【】")) {
+    if (cond.length < 3) return ""
     const statuses = toStatus(cond.substring(2).toLowerCase())
     return `[?b :block/marker ?m]${
       statuses.length > 0
         ? ` (or ${statuses.map((status) => `[(= ?m "${status}")]`).join(" ")})`
         : ""
     }`
+  } else {
+    // Defaults to text search.
+    return `[?b :block/content ?c] [(?includes ?c "${cond}")]`
   }
 }
 
