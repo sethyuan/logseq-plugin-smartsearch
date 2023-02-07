@@ -9,6 +9,7 @@ Triggers an input that helps you search various types of data.
 - While editing, use the default shortcut key `ctrl+space` to call it out. You can change it in settings.
 - `esc` to close the input.
 - Search by tag. Format `#tag`, `##tag` to also include it's descendants and `#>tag` to also include it's immediate children.
+- Search for blocks not containing the specified tag, used in combinations, see below. Format `#!tag`.
 - Completion of tag names is supported, just type part of the tag.
 - Search by property existence. Format `@property`.
 - Search by property non-existence. Format `@!property`.
