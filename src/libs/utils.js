@@ -21,16 +21,22 @@ export async function parseContent(content) {
 
   // Replace block refs with their content.
   let match
-  while ((match = /\(\(([^\)]+)\)\)/g.exec(content)) != null) {
+  while ((match = /(?:\(\()(?!\()([^\)]+)\)\)/g.exec(content)) != null) {
     const start = match.index
     const end = start + match[0].length
     const refUUID = match[1]
-    const refBlock = await logseq.Editor.getBlock(refUUID)
-    if (refBlock == null) break
-    const refContent = await parseContent(refBlock.content)
-    content = `${content.substring(0, start)}${refContent}${content.substring(
-      end,
-    )}`
+    try {
+      const refBlock = await logseq.Editor.getBlock(refUUID)
+      if (refBlock == null) break
+      const refFirstLine = refBlock.content.match(/.*/)[0]
+      const refContent = await parseContent(refFirstLine)
+      content = `${content.substring(0, start)}${refContent}${content.substring(
+        end,
+      )}`
+    } catch (err) {
+      // ignore err
+      break
+    }
   }
 
   return content.trim()
