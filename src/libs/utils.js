@@ -65,7 +65,10 @@ export function buildQuery(q) {
 
 function buildCond(cond, i) {
   if (cond.length < 1) return ""
-  if (cond.startsWith("#")) {
+  if (cond.startsWith("#!") || cond.startsWith("#！")) {
+    const name = cond.substring(2).toLowerCase()
+    return `[?t${i} :block/name "${name}"] (not [?b :block/refs ?t${i}])`
+  } else if (cond.startsWith("#")) {
     if (cond.length < 2) return ""
     if (cond[1] === "#") {
       const name = cond.substring(2).toLowerCase()
@@ -282,7 +285,7 @@ function toStatus(s) {
 
 function buildTagQuery(cond) {
   if (!cond?.startsWith("#")) return []
-  const namePart = cond.replace(/^#(>|#)?/, "").toLowerCase()
+  const namePart = cond.replace(/^#(>|#|!|！)?/, "").toLowerCase()
   if (!namePart) return []
   return [
     `[:find (pull ?b [:block/name :block/uuid]) :where [?b :block/name ?name] [(clojure.string/includes? ?name "${namePart}")]]`,
