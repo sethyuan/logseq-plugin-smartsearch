@@ -10,9 +10,9 @@ import {
   includesValue,
   le,
   lt,
-  parseContent,
   postProcessResult,
-} from "../libs/utils"
+} from "../libs/query"
+import { parseContent } from "../libs/utils"
 
 const BLUR_WAIT = 100
 

@@ -10,10 +10,9 @@ import {
   includesValue,
   le,
   lt,
-  parseContent,
   postProcessResult,
-  setDateFormat,
-} from "./libs/utils"
+} from "./libs/query"
+import { parseContent, setDateFormat } from "./libs/utils"
 import zhCN from "./translations/zh-CN.json"
 
 const INPUT_ID = "kef-ss-input"
