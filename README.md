@@ -38,3 +38,28 @@ https://user-images.githubusercontent.com/3410293/201457231-4e0575e3-b145-41c7-9
 https://user-images.githubusercontent.com/3410293/206380210-c4260579-e6c1-456f-a527-70153cf4940f.mp4
 
 https://user-images.githubusercontent.com/3410293/218086769-081eadc2-ac02-4cf6-9be7-474b17cbc8e9.mp4
+
+## 时间段示例
+
+```
+# 本周需完成的任务
+%j w, []nl
+
+# 上周的任务
+%j -1w, []nld
+
+# 下周的待办任务
+%j +1w, []l
+
+# 一年前的Logseq日记
+%j -1y, logseq
+
+# 两年前至今的Logseq日记
+%j -2y~d, logseq
+
+# 某一天的Logseq日记
+%j 20230210, logseq
+
+# 某一段时间内的Logseq日记
+%j 20221231~20230210, logseq
+```

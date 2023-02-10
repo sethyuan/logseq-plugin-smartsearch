@@ -37,3 +37,28 @@ https://user-images.githubusercontent.com/3410293/201457231-4e0575e3-b145-41c7-9
 https://user-images.githubusercontent.com/3410293/206380210-c4260579-e6c1-456f-a527-70153cf4940f.mp4
 
 https://user-images.githubusercontent.com/3410293/218086769-081eadc2-ac02-4cf6-9be7-474b17cbc8e9.mp4
+
+## Date range examples
+
+```
+# Tasks that need to be done for this week
+%j w, []nl
+
+# Tasks of the previous week
+%j -1w, []nld
+
+# Tasks to be done for the next week
+%j +1w, []l
+
+# Journals that mentioned logseq in the previous year
+%j -1y, logseq
+
+# Journals that mentioned logseq from 2 years ago until now
+%j -2y~d, logseq
+
+# Journal of a specific day mentioning logseq.
+%j 20230210, logseq
+
+# Journals from a specific period that mentioned logseq.
+%j 20221231~20230210, logseq
+```
