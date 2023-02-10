@@ -3,7 +3,7 @@
   "Whether to enable the search provider integration.": "是否开启搜索集成。",
   "Trigger smartsearch input": "触发智能搜索的输入框",
   "e.g.: #book, @published: 2000; holmes": "示例：#书，@出版于：2000；福尔摩斯",
-  "#[!]tag, ##tag, #>tag, @[!]prop, @[!]prop:value, @prop [=<>]1, @prop~ [-+]1w~[-+]1d, []nltidwc, ;filter": "#[!]标签, ##标签, #>标签, @[!]属性, @[!]属性:值, @属性[=<>]1, @属性~ [-+]1w~[-+]1d, []nltidwc, ;文字过滤",
+  "#[!]tag, ##tag, #>tag, @[!]prop: value, @prop [=<>]1, @prop~ -1w~d, []nltidwc, %j -1w~d, ;filter": "#[!]标签, ##标签, #>标签, @[!]属性: 值, @属性 [=<>]1, @属性~ -1w~d, []nltidwc, %j -1w~d, ;文字过滤",
   "select=ref; ⌘=embed; ⌥=content; ⇧=goto; ⇧+⌥=sidebar": "选择=引用；⌘=嵌入；⌥=内容；⇧=跳转；⇧+⌥=侧边栏",
   "select=ref; ctrl=embed; alt=content; shift=goto; shift+alt=sidebar": "选择=引用；ctrl=嵌入；alt=内容；shift=跳转；shift+alt=侧边栏",
   "select=complete; ⇧=goto; ⇧+⌥=sidebar": "选择=上屏；⇧=跳转；⇧+⌥=侧边栏",

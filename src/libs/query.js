@@ -6,6 +6,7 @@ import {
   endOfDay,
   endOfMonth,
   endOfWeek,
+  format,
   parse,
   setDefaultOptions,
   startOfDay,
@@ -134,7 +135,10 @@ function buildCond(cond, i) {
       case "～": {
         const [name, dateStr] = [
           str.substring(0, opIndex).trim().toLowerCase(),
-          str.substring(opIndex + 1).trim(),
+          str
+            .substring(opIndex + 1)
+            .trim()
+            .toLowerCase(),
         ]
         if (!dateStr) break
         const [start, end] = parseDateRange(dateStr)
@@ -142,7 +146,7 @@ function buildCond(cond, i) {
         return `[?b :block/properties ?bp${i}]
           (not [?b :block/name])
           [(get ?bp${i} :${name}) ?v${i}]
-          [(?ge ?v${i} ${start})] [(?le ?v${i} ${end})]`
+          [(?ge ?v${i} ${start.getTime()})] [(?le ?v${i} ${end.getTime()})]`
       }
       default:
         break
@@ -156,6 +160,16 @@ function buildCond(cond, i) {
         ? ` (or ${statuses.map((status) => `[(= ?m "${status}")]`).join(" ")})`
         : ""
     }`
+  } else if (cond.startsWith("%j ")) {
+    const dateStr = cond.substring(3).trim().toLowerCase()
+    if (!dateStr) return ""
+    const [start, end] = parseDateRange(dateStr).map(
+      (date) => date && format(date, "yyyyMMdd"),
+    )
+    if (start == null || end == null) return ""
+    return `[?b :block/page ?j${i}]
+      [?j${i} :block/journal-day ?d${i}]
+      [(>= ?d${i} ${start})] [(<= ?d${i} ${end})]`
   } else {
     // Defaults to text search.
     return `[?b :block/content ?c] [(?includes ?c "${cond}")]`
@@ -280,7 +294,7 @@ function parseDateRange(rangeStr) {
       part = part.trim()
       if (part.length === 8 && /[0-9]/.test(part[7])) {
         try {
-          const date = parse(part, "yyyyMMdd", new Date()).getTime()
+          const date = parse(part, "yyyyMMdd", new Date())
           return [date, date]
         } catch (err) {
           return null
@@ -292,7 +306,7 @@ function parseDateRange(rangeStr) {
         const anchor = addUnit[unit](new Date(), quantity)
         const start = startOfUnit[unit](anchor)
         const end = endOfUnit[unit](anchor)
-        return [start.getTime(), end.getTime()]
+        return [start, end]
       }
     })
     .filter((part) => part != null)
