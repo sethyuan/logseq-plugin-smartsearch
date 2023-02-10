@@ -16,9 +16,9 @@ Triggers an input that helps you search various types of data.
 - Search by property value, can also work with partial value. Format `@property: value`.
 - Search blocks without a specified property-value. Format `@!property: value`.
 - Search by property value of number type. Format `@property >value`, supported operators are `>` `<` `=` `<=` `>=`.
-- Search by property value of date type. Format `@property~ -1w~d`, supported units are `d` `w` `m` `y`, meaning "days", "weeks", "months" and "years"; The range represented by a `~` is optional.
+- Search by property value of date type. Format `@property~ -1w~d`, supported units are `d` `w` `m` `y`, meaning "days", "weeks", "months" and "years"; The range represented by a `~` is optional. Absolute dates in the format `yyyyMMdd` is also supported, e.g, `20230131~d`.
 - Search by task status. Format `[]nltidwc`. `n`=`NOW`, `l`=`LATER`, `t`=`TODO`, `i`=`DOING`, `d`=`DONE`, `w`=`WAITING`, `c`=`CANCELED`.
-- Search journal blocks. Format `%j -1w~d`, supported units are `d` `w` `m` `y`, meaning "days", "weeks", "months" and "years"; The range represented by a `~` is optional.
+- Search journal blocks. Format `%j -1w~d`, supported units are `d` `w` `m` `y`, meaning "days", "weeks", "months" and "years"; The range represented by a `~` is optional. Absolute dates in the format `yyyyMMdd` is also supported, e.g, `20230131~d`.
 - Full text search. E.g, `learning note`.
 - Make combinations of text, tags, properties, tasks and journal blocks, separate them with a `,`. Format `#Book, @published: 2022`.
 - Put a `;` at the end to further filter the results. E.g, `#book; holmes`.
