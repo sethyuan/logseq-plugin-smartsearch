@@ -1,9 +1,3 @@
-let dateFormat
-
-export function setDateFormat(value) {
-  dateFormat = value
-}
-
 export async function parseContent(content) {
   // Remove properties.
   content = content.replace(/\b[^:\n]+:: [^\n]+/g, "")

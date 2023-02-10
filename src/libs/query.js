@@ -9,6 +9,12 @@ const addUnit = {
   d: addDays,
 }
 
+let dateFormat
+
+export function setDateFormat(value) {
+  dateFormat = value
+}
+
 export function buildQuery(q) {
   if (!q) return []
   const filterIndex = Math.max(q.lastIndexOf(";"), q.lastIndexOf("；"))
