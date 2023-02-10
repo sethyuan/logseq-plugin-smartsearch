@@ -11,7 +11,7 @@ import {
   le,
   lt,
   postProcessResult,
-  setDateFormat,
+  setDateOptions,
 } from "./libs/query"
 import { parseContent } from "./libs/utils"
 import zhCN from "./translations/zh-CN.json"
@@ -26,8 +26,10 @@ let lastBlock
 async function main() {
   await setup({ builtinTranslations: { "zh-CN": zhCN } })
 
-  const { preferredDateFormat } = await logseq.App.getUserConfigs()
-  setDateFormat(preferredDateFormat)
+  const { preferredDateFormat, preferredStartOfWeek } =
+    await logseq.App.getUserConfigs()
+  const weekStart = (+(preferredStartOfWeek ?? 6) + 1) % 7
+  setDateOptions(preferredDateFormat, weekStart)
 
   provideStyles()
 
@@ -150,7 +152,7 @@ function provideStyles() {
   logseq.provideStyle(`
     #${INPUT_ID} {
       position: absolute;
-      top: 95%;
+      top: 195%;
       left: 0;
       z-index: var(--ls-z-index-level-2);
       display: none;
@@ -185,7 +187,6 @@ function provideStyles() {
       left: 0;
       transform: translateY(-100%);
       padding-left: 2px;
-      width: max-content;
       font-size: 0.75em;
       line-height: 2;
       color: var(--ls-secondary-text-color);

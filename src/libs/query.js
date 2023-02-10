@@ -1,4 +1,17 @@
-import { addDays, addMonths, addWeeks, addYears } from "date-fns"
+import {
+  addDays,
+  addMonths,
+  addWeeks,
+  addYears,
+  endOfDay,
+  endOfMonth,
+  endOfWeek,
+  parse,
+  setDefaultOptions,
+  startOfDay,
+  startOfMonth,
+  startOfWeek,
+} from "date-fns"
 
 const UNITS = new Set(["y", "m", "w", "d"])
 
@@ -9,10 +22,25 @@ const addUnit = {
   d: addDays,
 }
 
+const startOfUnit = {
+  y: (date) => new Date(date.getFullYear(), 0, 1),
+  m: startOfMonth,
+  w: startOfWeek,
+  d: startOfDay,
+}
+
+const endOfUnit = {
+  y: (date) => new Date(date.getFullYear(), 11, 31, 23, 59, 59),
+  m: endOfMonth,
+  w: endOfWeek,
+  d: endOfDay,
+}
+
 let dateFormat
 
-export function setDateFormat(value) {
-  dateFormat = value
+export function setDateOptions(format, weekStartsOn) {
+  dateFormat = format
+  setDefaultOptions({ weekStartsOn })
 }
 
 export function buildQuery(q) {
@@ -76,7 +104,9 @@ function buildCond(cond, i) {
   } else if (cond.startsWith("@")) {
     if (cond.length < 2) return ""
     const str = cond.substring(1)
-    const op = str.match(/:|：|\<=|\>=|\>|\<|=| ~| ～| -| \+/)?.[0]
+    const match = str.match(/:|：|\<=|\>=|\>|\<|=|~|～/)
+    const op = match?.[0]
+    const opIndex = match?.index
     switch (op) {
       case ":":
       case "：": {
@@ -100,42 +130,19 @@ function buildCond(cond, i) {
         if (!value) break
         return `[?b :block/properties ?bp${i}] [(get ?bp${i} :${name}) ?v${i}] (not [?b :block/name]) [(${op} ?v${i} ${value})]`
       }
-      case " ~":
-      case " ～": {
-        const [name, dateStr] = str
-          .split(op)
-          .map((s, i) => (i === 0 ? s.trim().toLowerCase() : s.trim()))
-        if (!dateStr || dateStr.length < 2) break
-        const [start, end] = lastDates(dateStr)
+      case "~":
+      case "～": {
+        const [name, dateStr] = [
+          str.substring(0, opIndex).trim().toLowerCase(),
+          str.substring(opIndex + 1).trim(),
+        ]
+        if (!dateStr) break
+        const [start, end] = parseDateRange(dateStr)
         if (start == null || end == null) break
         return `[?b :block/properties ?bp${i}]
           (not [?b :block/name])
           [(get ?bp${i} :${name}) ?v${i}]
           [(?ge ?v${i} ${start})] [(?le ?v${i} ${end})]`
-      }
-      case " -": {
-        const [name, dateStr] = str
-          .split(op)
-          .map((s, i) => (i === 0 ? s.trim().toLowerCase() : s.trim()))
-        if (!dateStr || dateStr.length < 2) break
-        const refDate = pastDate(dateStr)
-        if (refDate == null) break
-        return `[?b :block/properties ?bp${i}]
-          (not [?b :block/name])
-          [(get ?bp${i} :${name}) ?v${i}]
-          [(?lt ?v${i} ${refDate})]`
-      }
-      case " +": {
-        const [name, dateStr] = str
-          .split(op)
-          .map((s, i) => (i === 0 ? s.trim().toLowerCase() : s.trim()))
-        if (!dateStr || dateStr.length < 2) break
-        const refDate = futureDate(dateStr)
-        if (refDate == null) break
-        return `[?b :block/properties ?bp${i}]
-          (not [?b :block/name])
-          [(get ?bp${i} :${name}) ?v${i}]
-          [(?gt ?v${i} ${refDate})]`
       }
       default:
         break
@@ -266,27 +273,30 @@ function buildTagQuery(cond) {
   ]
 }
 
-function lastDates(dateStr) {
-  const quantity = +dateStr.substring(0, dateStr.length - 1)
-  const unit = dateStr[dateStr.length - 1]
-  if (isNaN(quantity) || !UNITS.has(unit)) return []
-  const today = new Date()
-  const start = addUnit[unit](today, -quantity)
-  return [start.getTime(), today.getTime()]
-}
-
-function pastDate(dateStr) {
-  const quantity = +dateStr.substring(0, dateStr.length - 1)
-  const unit = dateStr[dateStr.length - 1]
-  if (isNaN(quantity) || !UNITS.has(unit)) return null
-  const ret = addUnit[unit](new Date(), -quantity)
-  return ret.getTime()
-}
-
-function futureDate(dateStr) {
-  const quantity = +dateStr.substring(0, dateStr.length - 1)
-  const unit = dateStr[dateStr.length - 1]
-  if (isNaN(quantity) || !UNITS.has(unit)) return null
-  const ret = addUnit[unit](new Date(), quantity)
-  return ret.getTime()
+function parseDateRange(rangeStr) {
+  const range = rangeStr
+    .split(/~|～/)
+    .map((part) => {
+      part = part.trim()
+      if (part.length === 8 && /[0-9]/.test(part[7])) {
+        try {
+          const date = parse(part, "yyyyMMdd", new Date()).getTime()
+          return [date, date]
+        } catch (err) {
+          return null
+        }
+      } else {
+        const quantity = +part.substring(0, part.length - 1)
+        const unit = part[part.length - 1]
+        if (isNaN(quantity) || !UNITS.has(unit)) return null
+        const anchor = addUnit[unit](new Date(), quantity)
+        const start = startOfUnit[unit](anchor)
+        const end = endOfUnit[unit](anchor)
+        return [start.getTime(), end.getTime()]
+      }
+    })
+    .filter((part) => part != null)
+    .flat()
+  if (range.length < 2) return []
+  return [range[0], range[range.length - 1]]
 }
