@@ -173,7 +173,7 @@ export default function SmartSearchInput({ onClose }) {
       default:
         // HACK: do not propagate select all.
         if (
-          (!e.shiftKey && !e.ctrlKey && !e.metaKey && !e.altKey) ||
+          (!e.ctrlKey && !e.metaKey && !e.altKey) ||
           (e.metaKey && e.code === "KeyA")
         ) {
           e.stopPropagation()
