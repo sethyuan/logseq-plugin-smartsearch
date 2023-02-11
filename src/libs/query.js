@@ -167,9 +167,12 @@ function buildCond(cond, i) {
       (date) => date && format(date, "yyyyMMdd"),
     )
     if (start == null || end == null) return ""
-    return `[?b :block/page ?j${i}]
-      [?j${i} :block/journal-day ?d${i}]
-      [(>= ?d${i} ${start})] [(<= ?d${i} ${end})]`
+    return `[?j${i} :block/journal-day ?d${i}]
+      [(>= ?d${i} ${start})]
+      [(<= ?d${i} ${end})]
+      (or
+        [?b :block/page ?j${i}]
+        [?b :block/refs ?j${i}])`
   } else {
     // Defaults to text search.
     return `[?b :block/content ?c] [(?includes ?c "${cond}")]`
