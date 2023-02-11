@@ -172,7 +172,7 @@ function buildCond(cond, i) {
       [(<= ?d${i} ${end})]
       (or
         [?b :block/page ?j${i}]
-        [?b :block/refs ?j${i}])`
+        [?b :block/path-refs ?j${i}])`
   } else {
     // Defaults to text search.
     return `[?b :block/content ?c] [(?includes ?c "${cond}")]`
