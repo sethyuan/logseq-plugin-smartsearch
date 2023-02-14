@@ -12,7 +12,7 @@ import {
   lt,
   postProcessResult,
 } from "../libs/query"
-import { parseContent } from "../libs/utils"
+import { parseContent, persistBlockUUID } from "../libs/utils"
 
 const BLUR_WAIT = 100
 
@@ -222,6 +222,7 @@ export default function SmartSearchInput({ onClose }) {
     if (block["pre-block?"]) {
       outputAndClose(`[[${block.content}]]`)
     } else {
+      persistBlockUUID(block)
       outputAndClose(`((${block.uuid}))`)
     }
   }
@@ -230,6 +231,7 @@ export default function SmartSearchInput({ onClose }) {
     if (block["pre-block?"]) {
       outputAndClose(`{{embed [[${block.content}]]}}`)
     } else {
+      persistBlockUUID(block)
       outputAndClose(`{{embed ((${block.uuid}))}}`)
     }
   }
