@@ -1,6 +1,6 @@
 export async function parseContent(content) {
   // Remove properties.
-  content = content.replace(/\b[^:\n]+:: [^\n]+/g, "")
+  content = content.replace(/^.+:: .+$/gm, "").trim()
 
   // Replace block refs with their content.
   let match
