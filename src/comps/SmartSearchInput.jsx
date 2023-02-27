@@ -354,8 +354,13 @@ export default function SmartSearchInput({ onClose }) {
             onMouseDown={stopPropagation}
             onClick={(e) => chooseOutput(e, block)}
           >
+            <span class="kef-ss-tagicon">
+              {block["pre-block?"] ? "P" : "B"}
+            </span>
             {block.content.split("\n").map((line) => (
-              <div key={line}>{line}</div>
+              <span key={line} class="kef-ss-listitem-text">
+                {line}
+              </span>
             ))}
           </li>
         ))}
@@ -367,7 +372,7 @@ export default function SmartSearchInput({ onClose }) {
               onClick={(e) => chooseForTag(e, tag)}
             >
               <span class="kef-ss-tagicon">T</span>
-              <span>{tag.name}</span>
+              <span class="kef-ss-listitem-text">{tag.name}</span>
             </li>
           ))}
       </ul>

@@ -208,6 +208,8 @@ function provideStyles() {
       padding: 8px 16px;
       margin: 0;
       cursor: pointer;
+      display: flex;
+      align-items: baseline;
     }
     .kef-ss-listitem:hover {
       background: var(--ls-menu-hover-color);
@@ -216,9 +218,13 @@ function provideStyles() {
       background: var(--ls-selection-background-color);
     }
     .kef-ss-tagicon {
+      flex: 0 0 auto;
       margin-right: 1em;
       font-weight: bold;
       font-size: 0.875em;
+    }
+    .kef-ss-listitem-text {
+      flex: 1 1 auto;
     }
   `)
 }
