@@ -152,6 +152,17 @@ export default function SmartSearchInput({ onClose }) {
         }
         break
       }
+      case "Tab": {
+        e.stopPropagation()
+        e.preventDefault()
+        if (e.shiftKey || e.ctrlKey || e.metaKey || e.altKey) break
+        if (list.length > 0 && list[chosen]["pre-block?"]) {
+          completePage(list[chosen].content)
+        } else if (tagList.length > 0) {
+          completeTag(tagList[chosen].name)
+        }
+        break
+      }
       case "ArrowDown": {
         e.stopPropagation()
         e.preventDefault()
@@ -174,7 +185,10 @@ export default function SmartSearchInput({ onClose }) {
         // HACK: do not propagate select all.
         if (
           (!e.ctrlKey && !e.metaKey && !e.altKey) ||
-          (e.metaKey && e.code === "KeyA")
+          ((e.metaKey || e.ctrlKey) && e.code === "KeyA") ||
+          ((e.metaKey || e.ctrlKey) && e.code === "KeyZ") ||
+          ((e.metaKey || e.ctrlKey) && e.shiftKey && e.code === "KeyZ") ||
+          (e.ctrlKey && e.code === "KeyY")
         ) {
           e.stopPropagation()
         }
@@ -314,6 +328,13 @@ export default function SmartSearchInput({ onClose }) {
     performQuery(query)
   }
 
+  function completePage(name) {
+    const value = input.current.value
+    const query = `#${value.startsWith("##") ? "#" : ""}${name}`
+    input.current.value = query
+    performQuery(query)
+  }
+
   function resetState() {
     setChosen(0)
     setList([])
@@ -379,14 +400,16 @@ export default function SmartSearchInput({ onClose }) {
       <div class="kef-ss-inputhint">
         {list.length > 0
           ? isMac
-            ? t("select=ref; ⌘=embed; ⌥=content; ⇧=goto; ⇧+⌥=sidebar")
+            ? t(
+                "select=ref; ⌘=embed; ⌥=content; ⇧=goto; ⇧+⌥=sidebar; ⇥=complete",
+              )
             : t(
-                "select=ref; ctrl=embed; alt=content; shift=goto; shift+alt=sidebar",
+                "select=ref; ctrl=embed; alt=content; shift=goto; shift+alt=sidebar; tab=complete",
               )
           : tagList.length > 0
           ? isMac
-            ? t("select=complete; ⇧=goto; ⇧+⌥=sidebar")
-            : t("select=complete; shift=goto; shift+alt=sidebar")
+            ? t("select=complete; ⇥=complete; ⇧=goto; ⇧+⌥=sidebar")
+            : t("select=complete; tab=complete; shift=goto; shift+alt=sidebar")
           : t(
               "#[!]tag, ##tag, #>tag, @[!]prop: value, @prop [=<>]1, @prop~ -1w~d, []nltidwc, %j -1w~d, ;filter",
             )}
