@@ -58,7 +58,7 @@ export function buildQuery(q) {
   if (!condStr) return []
   const [tagQ, tag] = buildTagQuery(conds[conds.length - 1])
   return [
-    `[:find (pull ?b [*]) :in $ ?includes ?contains ?ge ?le ?gt ?lt :where ${condStr}]`,
+    `[:find (pull ?b [* {:block/page [:db/id :block/journal-day]}]) :in $ ?includes ?contains ?ge ?le ?gt ?lt :where ${condStr}]`,
     filter,
     tagQ,
     tag,

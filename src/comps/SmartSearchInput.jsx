@@ -67,6 +67,7 @@ export default function SmartSearchInput({ onClose }) {
       )
         .flat()
         .filter((b) => b["pre-block?"] || b.content)
+        .sort((a, b) => b.page["journal-day"] - a.page["journal-day"])
       lastResult.current = result
       // console.log("query result:", result)
 
@@ -89,7 +90,7 @@ export default function SmartSearchInput({ onClose }) {
       setList(postProcessResult(result, filter))
       setChosen(0)
     } catch (err) {
-      // console.error(err, q)
+      console.error(err, q)
     }
   }
 
@@ -375,14 +376,12 @@ export default function SmartSearchInput({ onClose }) {
             onMouseDown={stopPropagation}
             onClick={(e) => chooseOutput(e, block)}
           >
-            <span class="kef-ss-tagicon">
-              {block["pre-block?"] ? "P" : "B"}
-            </span>
-            {block.content.split("\n").map((line) => (
-              <span key={line} class="kef-ss-listitem-text">
-                {line}
-              </span>
-            ))}
+            <div class="kef-ss-tagicon">{block["pre-block?"] ? "P" : "B"}</div>
+            <div class="kef-ss-listitem-text">
+              {block.content.split("\n").map((line) => (
+                <p key={line}>{line}</p>
+              ))}
+            </div>
           </li>
         ))}
         {list.length === 0 &&
