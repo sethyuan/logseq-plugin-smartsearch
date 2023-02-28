@@ -67,7 +67,9 @@ export default function SmartSearchInput({ onClose }) {
       )
         .flat()
         .filter((b) => b["pre-block?"] || b.content)
-        .sort((a, b) => b.page["journal-day"] - a.page["journal-day"])
+        .sort(
+          (a, b) => (b.page["journal-day"] ?? 0) - (a.page["journal-day"] ?? 0),
+        )
       lastResult.current = result
       // console.log("query result:", result)
 
