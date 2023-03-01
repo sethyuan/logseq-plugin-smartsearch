@@ -11,6 +11,7 @@ Triggers an input that helps you search various types of data.
 - Search by tag. Format `#tag`, `##tag` to also include it's descendants and `#>tag` to also include it's immediate children.
 - Search for blocks not containing the specified tag, used in combinations, see below. Format `#!tag`.
 - Completion of tag names is supported, just type part of the tag.
+- `>tag` for a candidate tag list that refers to `tag` to be use further in the query.
 - Search by property existence. Format `@property`.
 - Search by property non-existence. Format `@!property`.
 - Search by property value, can also work with partial value. Format `@property: value`.
