@@ -322,7 +322,7 @@ export default function SmartSearchInput({ onClose }) {
     try {
       const result = (await logseq.DB.datascriptQuery(tagQ)).flat()
       // console.log("tag result", result, tag)
-      if (result[0].name === tag) {
+      if (result.some((t) => t.name === tag)) {
         const empty = []
         setTagList(empty)
         lastTagResult.current = empty
