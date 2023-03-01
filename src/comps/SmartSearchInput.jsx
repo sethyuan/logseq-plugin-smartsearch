@@ -22,6 +22,7 @@ export default function SmartSearchInput({ onClose }) {
   const [list, setList] = useState([])
   const [tagList, setTagList] = useState([])
   const [chosen, setChosen] = useState(0)
+  const [isCompletionRequest, setIsCompletionRequest] = useState(false)
   const closeCalled = useRef(false)
   const lastQ = useRef()
   const lastResult = useRef([])
@@ -33,8 +34,8 @@ export default function SmartSearchInput({ onClose }) {
   )
 
   async function performQuery(query) {
-    const [q, filter, tagQ, tag] = buildQuery(query)
-    // console.log(q)
+    const [q, filter, tagQ, tag, isCompletionRequest] = buildQuery(query)
+    // console.log(q, tagQ, tag, isCompletionRequest)
 
     if (!q) {
       resetState()
@@ -89,8 +90,16 @@ export default function SmartSearchInput({ onClose }) {
           block.content = block["original-name"]
         }
       }
-      setList(postProcessResult(result, filter))
+      setList(
+        postProcessResult(
+          isCompletionRequest
+            ? result.filter((block) => block["pre-block?"])
+            : result,
+          filter,
+        ),
+      )
       setChosen(0)
+      setIsCompletionRequest(isCompletionRequest)
     } catch (err) {
       console.error(err, q)
     }
@@ -108,7 +117,23 @@ export default function SmartSearchInput({ onClose }) {
       }
       case "Enter": {
         if (e.isComposing) return
-        if (list.length > 0) {
+        if (isCompletionRequest && list.length > 0) {
+          if (!e.shiftKey && !e.ctrlKey && !e.metaKey && !e.altKey) {
+            e.stopPropagation()
+            e.preventDefault()
+            completeTag(list[chosen].content, isCompletionRequest)
+          } else if (e.shiftKey && !e.altKey && !e.metaKey && !e.ctrlKey) {
+            e.stopPropagation()
+            e.preventDefault()
+            gotoBlock(list[chosen])
+            outputAndClose()
+          } else if (e.shiftKey && e.altKey && !e.metaKey && !e.ctrlKey) {
+            e.stopPropagation()
+            e.preventDefault()
+            gotoBlock(list[chosen], true)
+            outputAndClose()
+          }
+        } else if (list.length > 0) {
           if (!e.shiftKey && !e.ctrlKey && !e.metaKey && !e.altKey) {
             e.stopPropagation()
             e.preventDefault()
@@ -159,7 +184,9 @@ export default function SmartSearchInput({ onClose }) {
         e.stopPropagation()
         e.preventDefault()
         if (e.shiftKey || e.ctrlKey || e.metaKey || e.altKey) break
-        if (list.length > 0 && list[chosen]["pre-block?"]) {
+        if (isCompletionRequest && list.length > 0) {
+          completeTag(list[chosen].content, isCompletionRequest)
+        } else if (list.length > 0 && list[chosen]["pre-block?"]) {
           completePage(list[chosen].content)
         } else if (tagList.length > 0) {
           completeTag(tagList[chosen].name)
@@ -221,7 +248,7 @@ export default function SmartSearchInput({ onClose }) {
     }
   }
 
-  function chooseForTag(e, tag) {
+  function chooseForTag(e, tag, isCompletionRequest) {
     e.stopPropagation()
     e.preventDefault()
     if (e.shiftKey && !e.metaKey && !e.ctrlKey && !e.altKey) {
@@ -231,7 +258,7 @@ export default function SmartSearchInput({ onClose }) {
       gotoBlock(tag, true)
       outputAndClose()
     } else {
-      completeTag(tag.name, true)
+      completeTag(tag.name ?? tag.content, isCompletionRequest, true)
     }
   }
 
@@ -309,7 +336,7 @@ export default function SmartSearchInput({ onClose }) {
     }
   }
 
-  function completeTag(tagName, viaClick = false) {
+  function completeTag(tagName, isCompletionRequest, viaClick = false) {
     if (viaClick) {
       // Prevent input from closing due to onblur.
       closeCalled.current = true
@@ -320,13 +347,19 @@ export default function SmartSearchInput({ onClose }) {
     }
 
     const value = input.current.value
-    const index = value.lastIndexOf("#")
+    const index = Math.max(
+      value.lastIndexOf("#"),
+      value.lastIndexOf(">"),
+      value.lastIndexOf("》"),
+    )
     if (index < 0) return
-    // Handle #, ##, #> cases.
-    const query = `${value.substring(
-      0,
-      index + (value[index + 1] === ">" ? 2 : 1),
-    )}${tagName}`
+    // Handle >, 》, #, ##, #> cases.
+    const query = isCompletionRequest
+      ? `${value.substring(0, index)}#${tagName}`
+      : `${value.substring(
+          0,
+          index + (value[index + 1] === ">" ? 2 : 1),
+        )}${tagName}`
     input.current.value = query
     performQuery(query)
   }
@@ -376,9 +409,15 @@ export default function SmartSearchInput({ onClose }) {
             key={block.uuid}
             class={cls("kef-ss-listitem", i === chosen && "kef-ss-chosen")}
             onMouseDown={stopPropagation}
-            onClick={(e) => chooseOutput(e, block)}
+            onClick={(e) =>
+              isCompletionRequest
+                ? chooseForTag(e, block, isCompletionRequest)
+                : chooseOutput(e, block)
+            }
           >
-            <div class="kef-ss-tagicon">{block["pre-block?"] ? "P" : "B"}</div>
+            <div class="kef-ss-tagicon">
+              {isCompletionRequest ? "T" : block["pre-block?"] ? "P" : "B"}
+            </div>
             <div class="kef-ss-listitem-text">
               {block.content.split("\n").map((line) => (
                 <p key={line}>{line}</p>
@@ -393,13 +432,13 @@ export default function SmartSearchInput({ onClose }) {
               class={cls("kef-ss-listitem", i === chosen && "kef-ss-chosen")}
               onClick={(e) => chooseForTag(e, tag)}
             >
-              <span class="kef-ss-tagicon">T</span>
-              <span class="kef-ss-listitem-text">{tag.name}</span>
+              <div class="kef-ss-tagicon">T</div>
+              <div class="kef-ss-listitem-text">{tag.name}</div>
             </li>
           ))}
       </ul>
       <div class="kef-ss-inputhint">
-        {list.length > 0
+        {list.length > 0 && !isCompletionRequest
           ? isMac
             ? t(
                 "select=ref; ⌘=embed; ⌥=content; ⇧=goto; ⇧+⌥=sidebar; ⇥=complete",
@@ -407,12 +446,12 @@ export default function SmartSearchInput({ onClose }) {
             : t(
                 "select=ref; ctrl=embed; alt=content; shift=goto; shift+alt=sidebar; tab=complete",
               )
-          : tagList.length > 0
+          : tagList.length > 0 || (isCompletionRequest && list.length > 0)
           ? isMac
             ? t("select=complete; ⇥=complete; ⇧=goto; ⇧+⌥=sidebar")
             : t("select=complete; tab=complete; shift=goto; shift+alt=sidebar")
           : t(
-              "#[!]tag, ##tag, #>tag, @[!]prop: value, @prop [=<>]1, @prop~ -1w~d, []nltidwc, %j -1w~d, ;filter",
+              "#[!]tag, ##tag, #>tag, >tag, @[!]prop: value, @prop [=<>]1, @prop~ -1w~d, []nltidwc, %j -1w~d, ;filter",
             )}
       </div>
     </div>

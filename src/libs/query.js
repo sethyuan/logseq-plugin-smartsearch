@@ -51,17 +51,22 @@ export function buildQuery(q) {
   const conds = (filterIndex > -1 ? q.substring(0, filterIndex) : q)
     .split(/[,，]/)
     .map((s) => s.trim())
-  const condStr = conds
-    .map((cond, i) => buildCond(cond, i))
-    .join("\n")
-    .trim()
+  const lastCond = conds[conds.length - 1]
+  const isCompletionRequest = [">", "》"].includes(lastCond?.[0])
+  const condStr = isCompletionRequest
+    ? buildCond(lastCond, 0)
+    : conds
+        .map((cond, i) => buildCond(cond, i))
+        .join("\n")
+        .trim()
   if (!condStr) return []
-  const [tagQ, tag] = buildTagQuery(conds[conds.length - 1])
+  const [tagQ, tag] = buildTagQuery(lastCond)
   return [
     `[:find (pull ?b [* {:block/page [:db/id :block/journal-day]}]) :in $ ?includes ?contains ?ge ?le ?gt ?lt :where ${condStr}]`,
     filter,
     tagQ,
     tag,
+    isCompletionRequest,
   ]
 }
 
@@ -82,6 +87,10 @@ function buildCond(cond, i) {
       const name = cond.substring(1).toLowerCase()
       return `[?t${i} :block/name "${name}"] [?b :block/refs ?t${i}]`
     }
+  } else if (cond.startsWith(">") || cond.startsWith("》")) {
+    if (cond.length < 2) return ""
+    const name = cond.substring(1).toLowerCase()
+    return `[?t${i} :block/name "${name}"] [?b :block/refs ?t${i}]`
   } else if (cond.startsWith("@!") || cond.startsWith("@！")) {
     if (cond.length < 3) return ""
     const str = cond.substring(2)
@@ -281,8 +290,8 @@ function toStatus(s) {
 }
 
 function buildTagQuery(cond) {
-  if (!cond?.startsWith("#")) return []
-  const namePart = cond.replace(/^#(>|#|!|！)?/, "").toLowerCase()
+  if (!cond || !["#", ">", "》"].includes(cond[0])) return []
+  const namePart = cond.replace(/^(#(>|#|!|！)?)|\>|》/, "").toLowerCase()
   if (!namePart) return []
   return [
     `[:find (pull ?b [:block/name :block/uuid]) :where [?b :block/name ?name] [(clojure.string/includes? ?name "${namePart}")]]`,
