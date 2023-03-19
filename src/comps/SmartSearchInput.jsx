@@ -1,7 +1,8 @@
 import { t } from "logseq-l10n"
-import { useCallback, useEffect, useRef, useState } from "preact/hooks"
+import { useCallback, useEffect, useMemo, useRef, useState } from "preact/hooks"
 import { debounce } from "rambdax"
 import { cls, useCompositionChange } from "reactutils"
+import { INPUT_ID } from "../libs/cons"
 import {
   buildQuery,
   containsValue,
@@ -27,6 +28,12 @@ export default function SmartSearchInput({ onClose }) {
   const lastQ = useRef()
   const lastResult = useRef([])
   const lastTagResult = useRef([])
+  const ss = useMemo(() => parent.document.getElementById(INPUT_ID), [])
+  const isMac = useMemo(
+    () => parent.document.documentElement.classList.contains("is-mac"),
+    [],
+  )
+  const isGlobal = ss.classList.contains("kef-ss-global")
 
   const handleQuery = useCallback(
     debounce((e) => performQuery(e.target.value), 300),
@@ -137,16 +144,27 @@ export default function SmartSearchInput({ onClose }) {
           if (!e.shiftKey && !e.ctrlKey && !e.metaKey && !e.altKey) {
             e.stopPropagation()
             e.preventDefault()
-            outputRef(list[chosen])
+            if (!isGlobal) {
+              outputRef(list[chosen])
+            } else {
+              gotoBlock(list[chosen])
+              outputAndClose()
+            }
           } else if (e.altKey && !e.shiftKey && !e.metaKey && !e.ctrlKey) {
             e.stopPropagation()
             e.preventDefault()
+            if (isGlobal) return
             outputContent(list[chosen])
           } else if (e.shiftKey && !e.ctrlKey && !e.metaKey && !e.altKey) {
             e.stopPropagation()
             e.preventDefault()
-            gotoBlock(list[chosen])
-            outputAndClose()
+            if (!isGlobal) {
+              gotoBlock(list[chosen])
+              outputAndClose()
+            } else {
+              gotoBlock(list[chosen], true)
+              outputAndClose()
+            }
           } else if (e.shiftKey && e.altKey && !e.ctrlKey && !e.metaKey) {
             e.stopPropagation()
             e.preventDefault()
@@ -159,6 +177,7 @@ export default function SmartSearchInput({ onClose }) {
           ) {
             e.stopPropagation()
             e.preventDefault()
+            if (isGlobal) return
             outputEmbed(list[chosen])
           }
         } else if (tagList.length > 0) {
@@ -387,7 +406,6 @@ export default function SmartSearchInput({ onClose }) {
   }, [chosen])
 
   const inputProps = useCompositionChange(handleQuery)
-  const isMac = parent.document.documentElement.classList.contains("is-mac")
 
   const stopPropagation = useCallback((e) => e.stopPropagation(), [])
 
@@ -440,9 +458,13 @@ export default function SmartSearchInput({ onClose }) {
       <div class="kef-ss-inputhint">
         {list.length > 0 && !isCompletionRequest
           ? isMac
-            ? t(
-                "select=ref; ⌘=embed; ⌥=content; ⇧=goto; ⇧+⌥=sidebar; ⇥=complete",
-              )
+            ? isGlobal
+              ? t("select=goto; ⇧=sidebar")
+              : t(
+                  "select=ref; ⌘=embed; ⌥=content; ⇧=goto; ⇧+⌥=sidebar; ⇥=complete",
+                )
+            : isGlobal
+            ? t("select=goto; shift=sidebar")
             : t(
                 "select=ref; ctrl=embed; alt=content; shift=goto; shift+alt=sidebar; tab=complete",
               )

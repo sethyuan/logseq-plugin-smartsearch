@@ -2,6 +2,7 @@ import "@logseq/libs"
 import { setup, t } from "logseq-l10n"
 import { render } from "preact"
 import SmartSearchInput from "./comps/SmartSearchInput"
+import { INPUT_ID } from "./libs/cons"
 import {
   buildQuery,
   containsValue,
@@ -15,8 +16,6 @@ import {
 } from "./libs/query"
 import { parseContent } from "./libs/utils"
 import zhCN from "./translations/zh-CN.json"
-
-const INPUT_ID = "kef-ss-input"
 
 let inputContainer
 let inputContainerParent
@@ -157,6 +156,11 @@ function provideStyles() {
       z-index: var(--ls-z-index-level-2);
       display: none;
     }
+    #${INPUT_ID}.kef-ss-global {
+      top: 150px;
+      left: 50%;
+      transform: translateX(-50%);
+    }
     .kef-ss-container {
       background: var(--ls-primary-background-color);
       box-shadow: var(--tw-ring-offset-shadow,0 0 #0000),var(--tw-ring-shadow,0 0 #0000),var(--tw-shadow);
@@ -245,27 +249,35 @@ async function openInput() {
     editor.appendChild(inputContainer)
     inputContainer.style.display = "block"
     inputContainer.querySelector("input").focus()
+  } else {
+    inputContainer.classList.add("kef-ss-global")
+    inputContainer.style.display = "block"
+    inputContainer.querySelector("input").focus()
   }
 }
 
 async function closeInput(text = "") {
+  const centered = inputContainer.classList.contains("kef-ss-global")
   inputContainer.style.display = "none"
+  inputContainer.classList.remove("kef-ss-global")
   inputContainerParent.appendChild(inputContainer)
-  const pos = textarea.selectionStart
-  const newPos = pos + text.length
-  if (text) {
-    const content = textarea.value
-    await logseq.Editor.updateBlock(
-      lastBlock.uuid,
-      pos < content.length
-        ? `${content.substring(0, pos)}${text}${content.substring(pos)}`
-        : pos === content.length
-        ? `${content}${text}`
-        : `${content} ${text}`,
-    )
+  if (!centered) {
+    const pos = textarea.selectionStart
+    const newPos = pos + text.length
+    if (text) {
+      const content = textarea.value
+      await logseq.Editor.updateBlock(
+        lastBlock.uuid,
+        pos < content.length
+          ? `${content.substring(0, pos)}${text}${content.substring(pos)}`
+          : pos === content.length
+          ? `${content}${text}`
+          : `${content} ${text}`,
+      )
+    }
+    textarea.focus()
+    textarea.setSelectionRange(newPos, newPos)
   }
-  textarea.focus()
-  textarea.setSelectionRange(newPos, newPos)
 }
 
 logseq.ready(main).catch(console.error)
