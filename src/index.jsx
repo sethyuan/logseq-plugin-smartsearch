@@ -163,7 +163,6 @@ function provideStyles() {
     }
     .kef-ss-container {
       background: var(--ls-primary-background-color);
-      box-shadow: var(--tw-ring-offset-shadow,0 0 #0000),var(--tw-ring-shadow,0 0 #0000),var(--tw-shadow);
       min-width: 350px;
       max-width: 800px;
       position: relative;
@@ -204,6 +203,7 @@ function provideStyles() {
       border: 1px solid var(--ls-border-color);
       max-height: 400px;
       overflow-y: auto;
+      box-shadow: 0 4px 16px 0 var(--ls-tertiary-background-color);
     }
     .kef-ss-list:empty {
       display: none;
