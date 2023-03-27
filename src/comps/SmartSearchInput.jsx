@@ -249,12 +249,23 @@ export default function SmartSearchInput({ onClose }) {
     e.stopPropagation()
     e.preventDefault()
     if (!e.shiftKey && !e.ctrlKey && !e.metaKey && !e.altKey) {
-      outputRef(block)
+      if (!isGlobal) {
+        outputRef(block)
+      } else {
+        gotoBlock(block)
+        outputAndClose()
+      }
     } else if (e.altKey && !e.shiftKey && !e.metaKey && !e.ctrlKey) {
+      if (isGlobal) return
       outputContent(block)
     } else if (e.shiftKey && !e.metaKey && !e.ctrlKey && !e.altKey) {
-      gotoBlock(block)
-      outputAndClose()
+      if (!isGlobal) {
+        gotoBlock(block)
+        outputAndClose()
+      } else {
+        gotoBlock(block, true)
+        outputAndClose()
+      }
     } else if (e.shiftKey && e.altKey && !e.ctrlKey && !e.metaKey) {
       gotoBlock(block, true)
       outputAndClose()
@@ -263,6 +274,7 @@ export default function SmartSearchInput({ onClose }) {
         ? e.metaKey && !e.shiftKey && !e.ctrlKey && !e.altKey
         : e.ctrlKey && !e.metaKey && !e.shiftKey && !e.altKey
     ) {
+      if (isGlobal) return
       outputEmbed(block)
     }
   }
