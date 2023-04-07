@@ -319,7 +319,6 @@ export default function SmartSearchInput({ onClose }) {
     if (closeCalled.current) return
     closeCalled.current = true
     onClose(output)
-    input.current.value = ""
     resetState()
   }
 
@@ -403,12 +402,15 @@ export default function SmartSearchInput({ onClose }) {
   }
 
   function resetState() {
+    // input.current.value = ""
     setChosen(0)
-    setList([])
-    setTagList([])
-    lastQ.current = null
-    lastResult.current = []
-    lastTagResult.current = []
+    if (input.current.value.length === 0) {
+      setList([])
+      setTagList([])
+      lastQ.current = null
+      lastResult.current = []
+      lastTagResult.current = []
+    }
   }
 
   useEffect(() => {

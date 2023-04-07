@@ -248,11 +248,11 @@ async function openInput() {
     lastBlock = await logseq.Editor.getCurrentBlock()
     editor.appendChild(inputContainer)
     inputContainer.style.display = "block"
-    inputContainer.querySelector("input").focus()
+    inputContainer.querySelector("input").select()
   } else {
     inputContainer.classList.add("kef-ss-global")
     inputContainer.style.display = "block"
-    inputContainer.querySelector("input").focus()
+    inputContainer.querySelector("input").select()
   }
 }
 
