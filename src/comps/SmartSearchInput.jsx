@@ -14,6 +14,7 @@ import {
   postProcessResult,
 } from "../libs/query"
 import { parseContent, persistBlockUUID } from "../libs/utils"
+import Breadcrumb from "./Breadcrumb"
 
 const BLUR_WAIT = 100
 
@@ -51,7 +52,7 @@ export default function SmartSearchInput({ onClose }) {
 
     if (q === lastQ.current) {
       if (lastResult.current.length > 0) {
-        setList(postProcessResult(lastResult.current, filter))
+        setList(await postProcessResult(lastResult.current, filter))
       }
       if (lastTagResult.current.length > 0) {
         setTagList(postProcessResult(lastTagResult.current, filter))
@@ -98,7 +99,7 @@ export default function SmartSearchInput({ onClose }) {
         }
       }
       setList(
-        postProcessResult(
+        await postProcessResult(
           isCompletionRequest
             ? result.filter((block) => block["pre-block?"])
             : result,
@@ -451,6 +452,9 @@ export default function SmartSearchInput({ onClose }) {
               {isCompletionRequest ? "T" : block["pre-block?"] ? "P" : "B"}
             </div>
             <div class="kef-ss-listitem-text">
+              {!block["pre-block?"] && (
+                <Breadcrumb segments={block.breadcrumb} />
+              )}
               {block.content.split("\n").map((line) => (
                 <p key={line}>{line}</p>
               ))}

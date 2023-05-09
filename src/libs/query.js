@@ -13,6 +13,7 @@ import {
   startOfMonth,
   startOfWeek,
 } from "date-fns"
+import { parseOneLineContent } from "./utils"
 
 const UNITS = new Set(["y", "m", "w", "d"])
 
@@ -246,15 +247,35 @@ function filterMatch(filter, content) {
   return false
 }
 
-export function postProcessResult(result, filter, limit = 100) {
+export async function postProcessResult(result, filter, limit = 100) {
   // Limit to the first n results.
-  return (
+  const blocks = (
     filter
       ? result.filter(({ content, name }) =>
           filterMatch(filter, content ?? name),
         )
       : result
   ).slice(0, limit)
+
+  Promise.all(blocks.map(setBlockBreadcrumb))
+
+  return blocks
+}
+
+async function setBlockBreadcrumb(block) {
+  const path = []
+  block.breadcrumb = path
+  while (block.parent != null) {
+    block =
+      block.page.id === block.parent.id
+        ? await logseq.Editor.getPage(block.parent.id)
+        : await logseq.Editor.getBlock(block.parent.id)
+    path.unshift({
+      label: (await parseOneLineContent(block.content)) ?? block.originalName,
+      name: block.name,
+      uuid: block.uuid,
+    })
+  }
 }
 
 function toStatus(s) {

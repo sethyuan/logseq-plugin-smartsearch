@@ -1,6 +1,6 @@
 {
   "name": "logseq-plugin-smartsearch",
-  "version": "0.20.0",
+  "version": "0.21.0",
   "main": "dist/index.html",
   "logseq": {
     "id": "_sethyuan-logseq-smartsearch",
@@ -14,6 +14,7 @@
     "@logseq/libs": "^0.0.14",
     "date-fns": "^2.29.3",
     "logseq-l10n": "^0.2.0",
+    "marked": "^4.0.19",
     "preact": "^10.11.2",
     "rambdax": "^8.1.0",
     "reactutils": "^5.12.0"
