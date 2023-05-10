@@ -52,10 +52,10 @@ export default function SmartSearchInput({ onClose }) {
 
     if (q === lastQ.current) {
       if (lastResult.current.length > 0) {
-        setList(await postProcessResult(lastResult.current, filter))
+        setList(await postProcessResult(lastResult.current, filter, true))
       }
       if (lastTagResult.current.length > 0) {
-        setTagList(postProcessResult(lastTagResult.current, filter))
+        setTagList(await postProcessResult(lastTagResult.current, filter))
       }
       setChosen(0)
       return
@@ -104,6 +104,7 @@ export default function SmartSearchInput({ onClose }) {
             ? result.filter((block) => block["pre-block?"])
             : result,
           filter,
+          !isCompletionRequest,
         ),
       )
       setChosen(0)
@@ -358,7 +359,7 @@ export default function SmartSearchInput({ onClose }) {
         setTagList(empty)
         lastTagResult.current = empty
       } else {
-        setTagList(postProcessResult(result))
+        setTagList(await postProcessResult(result))
         lastTagResult.current = result
       }
       setChosen(0)
@@ -452,9 +453,7 @@ export default function SmartSearchInput({ onClose }) {
               {isCompletionRequest ? "T" : block["pre-block?"] ? "P" : "B"}
             </div>
             <div class="kef-ss-listitem-text">
-              {!block["pre-block?"] && (
-                <Breadcrumb segments={block.breadcrumb} />
-              )}
+              {block.breadcrumb && <Breadcrumb segments={block.breadcrumb} />}
               {block.content.split("\n").map((line) => (
                 <p key={line}>{line}</p>
               ))}

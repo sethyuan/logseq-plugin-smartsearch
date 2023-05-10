@@ -247,7 +247,12 @@ function filterMatch(filter, content) {
   return false
 }
 
-export async function postProcessResult(result, filter, limit = 100) {
+export async function postProcessResult(
+  result,
+  filter,
+  needBreadcrumb = false,
+  limit = 100,
+) {
   // Limit to the first n results.
   const blocks = (
     filter
@@ -257,25 +262,35 @@ export async function postProcessResult(result, filter, limit = 100) {
       : result
   ).slice(0, limit)
 
-  Promise.all(blocks.map(setBlockBreadcrumb))
+  if (needBreadcrumb) {
+    for (const block of blocks) {
+      await setBlockBreadcrumb(block)
+    }
+  }
 
   return blocks
 }
 
 async function setBlockBreadcrumb(block) {
+  // No breadcrumb for pages.
+  if (block["pre-block?"]) return
+
   const path = []
-  block.breadcrumb = path
-  while (block.parent != null) {
-    block =
-      block.page.id === block.parent.id
-        ? await logseq.Editor.getPage(block.parent.id)
-        : await logseq.Editor.getBlock(block.parent.id)
+  let tempBlock = block
+  while (tempBlock.parent != null) {
+    tempBlock =
+      tempBlock.page.id === tempBlock.parent.id
+        ? await logseq.Editor.getPage(tempBlock.parent.id)
+        : await logseq.Editor.getBlock(tempBlock.parent.id)
     path.unshift({
-      label: (await parseOneLineContent(block.content)) ?? block.originalName,
-      name: block.name,
-      uuid: block.uuid,
+      label: tempBlock.content
+        ? await parseOneLineContent(tempBlock.content)
+        : tempBlock.originalName,
+      name: tempBlock.name,
+      uuid: tempBlock.uuid,
     })
   }
+  block.breadcrumb = path
 }
 
 function toStatus(s) {

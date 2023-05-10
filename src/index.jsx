@@ -106,7 +106,7 @@ async function main() {
                 block.content = await parseContent(block.content)
               }
             }
-            const list = postProcessResult(result, filter)
+            const list = await postProcessResult(result, filter)
             return {
               graph,
               key,
@@ -122,7 +122,7 @@ async function main() {
                 tagResult.length > 0 &&
                 !(tagResult.length === 1 && tagResult[0].name === tag)
               ) {
-                const list = postProcessResult(tagResult)
+                const list = await postProcessResult(tagResult)
                 return {
                   graph,
                   key,
@@ -229,6 +229,14 @@ function provideStyles() {
     }
     .kef-ss-listitem-text {
       flex: 1 1 auto;
+    }
+    .kef-ss-b-segs {
+      font-size: 0.9em;
+      opacity: 0.8;
+    }
+    .kef-ss-b-spacer.mx-2 {
+      margin-left: 0.2rem;
+      margin-right: 0.2rem;
     }
   `)
 }
