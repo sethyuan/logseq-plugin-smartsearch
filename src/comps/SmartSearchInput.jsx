@@ -434,6 +434,7 @@ export default function SmartSearchInput({ onClose }) {
         placeholder={t("e.g.: #book, @published: 2000; holmes")}
         {...inputProps}
         onKeyDown={onKeyDown}
+        onMouseDown={stopPropagation}
         onFocus={onFocus}
         onBlur={onBlur}
       />
