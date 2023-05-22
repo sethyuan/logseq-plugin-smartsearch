@@ -251,16 +251,36 @@ export async function postProcessResult(
   result,
   filter,
   needBreadcrumb = false,
+  query,
   limit = 100,
 ) {
-  // Limit to the first n results.
-  const blocks = (
-    filter
-      ? result.filter(({ content, name }) =>
-          filterMatch(filter, content ?? name),
+  const pageResult =
+    query?.startsWith("#") && !/,，/.test(query)
+      ? (
+          await top.logseq.api.datascript_query(
+            `[:find (pull ?b [*]) :where [?b :block/name "${query
+              .substring(1)
+              .toLowerCase()}"]]`,
+          )
         )
-      : result
-  ).slice(0, limit)
+          .flat()
+          .map((page) => ({
+            ...page,
+            content: page["original-name"],
+            "pre-block?": true,
+          }))
+      : []
+
+  // Limit to the first n results.
+  const blocks = pageResult
+    .concat(
+      filter
+        ? result.filter(({ content, name }) =>
+            filterMatch(filter, content ?? name),
+          )
+        : result,
+    )
+    .slice(0, limit)
 
   if (needBreadcrumb) {
     for (const block of blocks) {

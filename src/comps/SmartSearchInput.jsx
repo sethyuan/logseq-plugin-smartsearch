@@ -52,7 +52,9 @@ export default function SmartSearchInput({ onClose }) {
 
     if (q === lastQ.current) {
       if (lastResult.current.length > 0) {
-        setList(await postProcessResult(lastResult.current, filter, true))
+        setList(
+          await postProcessResult(lastResult.current, filter, true, query),
+        )
       }
       if (lastTagResult.current.length > 0) {
         setTagList(await postProcessResult(lastTagResult.current, filter))
@@ -105,6 +107,7 @@ export default function SmartSearchInput({ onClose }) {
             : result,
           filter,
           !isCompletionRequest,
+          query,
         ),
       )
       setChosen(0)

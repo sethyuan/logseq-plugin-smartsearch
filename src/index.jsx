@@ -106,7 +106,7 @@ async function main() {
                 block.content = await parseContent(block.content)
               }
             }
-            const list = await postProcessResult(result, filter)
+            const list = await postProcessResult(result, filter, false, key)
             return {
               graph,
               key,
