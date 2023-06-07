@@ -16,7 +16,7 @@ import {
 import { parseContent, persistBlockUUID } from "../libs/utils"
 import Breadcrumb from "./Breadcrumb"
 
-const BLUR_WAIT = 100
+const BLUR_WAIT = 200
 
 export default function SmartSearchInput({ onClose }) {
   const input = useRef()
@@ -117,7 +117,7 @@ export default function SmartSearchInput({ onClose }) {
     }
   }
 
-  function onKeyDown(e) {
+  async function onKeyDown(e) {
     switch (e.key) {
       case "Escape": {
         if (!e.shiftKey && !e.ctrlKey && !e.metaKey && !e.altKey) {
@@ -137,12 +137,12 @@ export default function SmartSearchInput({ onClose }) {
           } else if (e.shiftKey && !e.altKey && !e.metaKey && !e.ctrlKey) {
             e.stopPropagation()
             e.preventDefault()
-            gotoBlock(list[chosen])
+            await gotoBlock(list[chosen])
             outputAndClose()
           } else if (e.shiftKey && e.altKey && !e.metaKey && !e.ctrlKey) {
             e.stopPropagation()
             e.preventDefault()
-            gotoBlock(list[chosen], true)
+            await gotoBlock(list[chosen], true)
             outputAndClose()
           }
         } else if (list.length > 0) {
@@ -152,7 +152,7 @@ export default function SmartSearchInput({ onClose }) {
             if (!isGlobal) {
               outputRef(list[chosen])
             } else {
-              gotoBlock(list[chosen])
+              await gotoBlock(list[chosen])
               outputAndClose()
             }
           } else if (e.altKey && !e.shiftKey && !e.metaKey && !e.ctrlKey) {
@@ -164,16 +164,16 @@ export default function SmartSearchInput({ onClose }) {
             e.stopPropagation()
             e.preventDefault()
             if (!isGlobal) {
-              gotoBlock(list[chosen])
+              await gotoBlock(list[chosen])
               outputAndClose()
             } else {
-              gotoBlock(list[chosen], true)
+              await gotoBlock(list[chosen], true)
               outputAndClose()
             }
           } else if (e.shiftKey && e.altKey && !e.ctrlKey && !e.metaKey) {
             e.stopPropagation()
             e.preventDefault()
-            gotoBlock(list[chosen], true)
+            await gotoBlock(list[chosen], true)
             outputAndClose()
           } else if (
             isMac
@@ -193,12 +193,12 @@ export default function SmartSearchInput({ onClose }) {
           } else if (e.shiftKey && !e.altKey && !e.metaKey && !e.ctrlKey) {
             e.stopPropagation()
             e.preventDefault()
-            gotoBlock(tagList[chosen])
+            await gotoBlock(tagList[chosen])
             outputAndClose()
           } else if (e.shiftKey && e.altKey && !e.metaKey && !e.ctrlKey) {
             e.stopPropagation()
             e.preventDefault()
-            gotoBlock(tagList[chosen], true)
+            await gotoBlock(tagList[chosen], true)
             outputAndClose()
           }
         }
@@ -250,14 +250,14 @@ export default function SmartSearchInput({ onClose }) {
     }
   }
 
-  function chooseOutput(e, block) {
+  async function chooseOutput(e, block) {
     e.stopPropagation()
     e.preventDefault()
     if (!e.shiftKey && !e.ctrlKey && !e.metaKey && !e.altKey) {
       if (!isGlobal) {
         outputRef(block)
       } else {
-        gotoBlock(block)
+        await gotoBlock(block)
         outputAndClose()
       }
     } else if (e.altKey && !e.shiftKey && !e.metaKey && !e.ctrlKey) {
@@ -265,14 +265,14 @@ export default function SmartSearchInput({ onClose }) {
       outputContent(block)
     } else if (e.shiftKey && !e.metaKey && !e.ctrlKey && !e.altKey) {
       if (!isGlobal) {
-        gotoBlock(block)
+        await gotoBlock(block)
         outputAndClose()
       } else {
-        gotoBlock(block, true)
+        await gotoBlock(block, true)
         outputAndClose()
       }
     } else if (e.shiftKey && e.altKey && !e.ctrlKey && !e.metaKey) {
-      gotoBlock(block, true)
+      await gotoBlock(block, true)
       outputAndClose()
     } else if (
       isMac
@@ -284,14 +284,14 @@ export default function SmartSearchInput({ onClose }) {
     }
   }
 
-  function chooseForTag(e, tag, isCompletionRequest) {
+  async function chooseForTag(e, tag, isCompletionRequest) {
     e.stopPropagation()
     e.preventDefault()
     if (e.shiftKey && !e.metaKey && !e.ctrlKey && !e.altKey) {
-      gotoBlock(tag)
+      await gotoBlock(tag)
       outputAndClose()
     } else if (e.shiftKey && e.altKey && !e.ctrlKey && !e.metaKey) {
-      gotoBlock(tag, true)
+      await gotoBlock(tag, true)
       outputAndClose()
     } else {
       completeTag(tag.name ?? tag.content, isCompletionRequest, true)
