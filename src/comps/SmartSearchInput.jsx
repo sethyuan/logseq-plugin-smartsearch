@@ -346,6 +346,9 @@ export default function SmartSearchInput({ onClose }) {
 
   function onFocus(e) {
     closeCalled.current = false
+    ul.current
+      .querySelector(".kef-ss-chosen")
+      ?.scrollIntoView({ block: "center" })
   }
 
   function onBlur(e) {
@@ -407,8 +410,6 @@ export default function SmartSearchInput({ onClose }) {
   }
 
   function resetState() {
-    // input.current.value = ""
-    setChosen(0)
     if (input.current.value.length === 0) {
       setList([])
       setTagList([])
