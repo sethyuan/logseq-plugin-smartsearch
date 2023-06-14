@@ -268,6 +268,7 @@ export async function postProcessResult(
             ...page,
             content: page["original-name"],
             "pre-block?": true,
+            page: { id: page.id },
           }))
       : []
 
