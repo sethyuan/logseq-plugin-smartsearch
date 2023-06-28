@@ -26,6 +26,7 @@ Triggers an input that helps you search various types of data.
 - Select using keyboard arrow keys or mouse.
 - Select (Enter or click) to insert reference, hold `cmd` or `ctrl` to insert embeds, hold `opt` or `alt` to insert text content.
 - Hold `shift` and select to go to the page or block，hold `shift+alt` and select to open the page or block in the right sidebar.
+- Support Chinese Pinyin.
 
 ## Usage
 
