@@ -13,6 +13,7 @@ import {
   startOfMonth,
   startOfWeek,
 } from "date-fns"
+import { match } from "pinyin-pro"
 import { parseOneLineContent } from "./utils"
 
 const UNITS = new Set(["y", "m", "w", "d"])
@@ -185,19 +186,25 @@ function buildCond(cond, i) {
         [?b :block/path-refs ?j${i}])`
   } else {
     // Defaults to text search.
-    return `[?b :block/content ?c] [(?includes ?c "${cond}")]`
+    return `(or-join [?b ?c] [?b :block/content ?c] (and [?b :block/page ?p] [?p :block/original-name ?c])) [(?includes ?c "${cond}")]`
   }
 }
 
 export function includesValue(prop, val) {
   if (prop.toLowerCase == null) return false
-  return prop.toLowerCase().includes(val.toLowerCase())
+  return logseq.settings?.enablePinyin ?? false
+    ? match(prop.toLowerCase(), val.toString(), { continuous: true }) != null
+    : prop.toLowerCase().includes(val.toLowerCase())
 }
 
 export function containsValue(prop, val) {
   if (!Array.isArray(prop)) return false
   const lowerVal = val.toLowerCase()
-  return prop.some((v) => v.toLowerCase().includes(lowerVal))
+  return prop.some((v) =>
+    logseq.settings?.enablePinyin ?? false
+      ? match(v.toLowerCase(), lowerVal, { continuous: true }) != null
+      : v.toLowerCase().includes(lowerVal),
+  )
 }
 
 export function ge(dateSet, val) {
@@ -351,7 +358,7 @@ function buildTagQuery(cond) {
   const namePart = cond.replace(/^(#(>|#|!|！)?)|\>|》/, "").toLowerCase()
   if (!namePart) return []
   return [
-    `[:find (pull ?b [:block/name :block/uuid]) :where [?b :block/name ?name] [(clojure.string/includes? ?name "${namePart}")]]`,
+    `[:find (pull ?b [:block/name :block/uuid]) :in $ ?includes :where [?b :block/name ?name] [(?includes ?name "${namePart}")]]`,
     namePart,
   ]
 }

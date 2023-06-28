@@ -45,6 +45,12 @@ async function main() {
       default: false,
       description: t("Whether to enable the search provider integration."),
     },
+    {
+      key: "enablePinyin",
+      type: "boolean",
+      default: false,
+      description: t("Whether to enable matching with pinyin."),
+    },
   ])
 
   logseq.provideUI({
@@ -117,7 +123,9 @@ async function main() {
             }
           } else {
             try {
-              const tagResult = (await logseq.DB.datascriptQuery(tagQ)).flat()
+              const tagResult = (
+                await top.logseq.api.datascript_query(tagQ, includesValue)
+              ).flat()
               if (
                 tagResult.length > 0 &&
                 !(tagResult.length === 1 && tagResult[0].name === tag)

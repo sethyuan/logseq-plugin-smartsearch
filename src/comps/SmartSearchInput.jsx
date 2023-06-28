@@ -358,7 +358,9 @@ export default function SmartSearchInput({ onClose }) {
 
   async function findTag(tagQ, tag) {
     try {
-      const result = (await logseq.DB.datascriptQuery(tagQ)).flat()
+      const result = (
+        await top.logseq.api.datascript_query(tagQ, includesValue)
+      ).flat()
       // console.log("tag result", result, tag)
       if (result.some((t) => t.name === tag)) {
         const empty = []
