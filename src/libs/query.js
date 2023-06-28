@@ -304,9 +304,9 @@ async function setBlockBreadcrumb(block) {
         ? await logseq.Editor.getPage(tempBlock.parent.id)
         : await logseq.Editor.getBlock(tempBlock.parent.id)
     path.unshift({
-      label: tempBlock.content
-        ? await parseOneLineContent(tempBlock.content)
-        : tempBlock.originalName,
+      label: tempBlock.originalName
+        ? tempBlock.originalName
+        : await parseOneLineContent(tempBlock.content),
       name: tempBlock.name,
       uuid: tempBlock.uuid,
     })
