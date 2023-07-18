@@ -13,10 +13,16 @@ import {
   lt,
   postProcessResult,
 } from "../libs/query"
-import { parseContent, persistBlockUUID } from "../libs/utils"
+import {
+  parseContent,
+  persistBlockUUID,
+  readHistory,
+  writeHistory,
+} from "../libs/utils"
 import Breadcrumb from "./Breadcrumb"
 
 const BLUR_WAIT = 200
+const HISTORY_LEN = 30
 
 export default function SmartSearchInput({ onClose }) {
   const input = useRef()
@@ -25,6 +31,7 @@ export default function SmartSearchInput({ onClose }) {
   const [tagList, setTagList] = useState([])
   const [chosen, setChosen] = useState(0)
   const [isCompletionRequest, setIsCompletionRequest] = useState(false)
+  const [historyList, setHistoryList] = useState([])
   const closeCalled = useRef(false)
   const lastQ = useRef()
   const lastResult = useRef([])
@@ -123,7 +130,7 @@ export default function SmartSearchInput({ onClose }) {
         if (!e.shiftKey && !e.ctrlKey && !e.metaKey && !e.altKey) {
           e.stopPropagation()
           e.preventDefault()
-          outputAndClose()
+          outputAndClose(undefined, true)
         }
         break
       }
@@ -201,6 +208,8 @@ export default function SmartSearchInput({ onClose }) {
             await gotoBlock(tagList[chosen], true)
             outputAndClose()
           }
+        } else if (input.current == null || input.current.value.length === 0) {
+          setInputQuery(e, historyList[chosen])
         }
         break
       }
@@ -214,13 +223,15 @@ export default function SmartSearchInput({ onClose }) {
           completePage(list[chosen].content)
         } else if (tagList.length > 0) {
           completeTag(tagList[chosen].name)
+        } else if (input.current == null || input.current.value.length === 0) {
+          setInputQuery(e, historyList[chosen])
         }
         break
       }
       case "ArrowDown": {
         e.stopPropagation()
         e.preventDefault()
-        const len = list.length || tagList.length
+        const len = list.length || tagList.length || historyList.length
         if (len > 0) {
           setChosen((n) => (n + 1 < len ? n + 1 : 0))
         }
@@ -229,7 +240,7 @@ export default function SmartSearchInput({ onClose }) {
       case "ArrowUp": {
         e.stopPropagation()
         e.preventDefault()
-        const len = list.length || tagList.length
+        const len = list.length || tagList.length || historyList.length
         if (len > 0) {
           setChosen((n) => (n - 1 >= 0 ? n - 1 : len - 1))
         }
@@ -320,11 +331,31 @@ export default function SmartSearchInput({ onClose }) {
     outputAndClose(block.content)
   }
 
-  function outputAndClose(output) {
+  function outputAndClose(output, noHistory = false) {
     if (closeCalled.current) return
     closeCalled.current = true
     onClose(output)
     resetState()
+    if (input.current?.value && !noHistory) {
+      let history
+      const index = historyList.findIndex((v) => v === input.current.value)
+      if (index > -1) {
+        history = [
+          input.current.value,
+          ...historyList.slice(0, index),
+          ...historyList.slice(index + 1),
+        ]
+      } else if (historyList.length < HISTORY_LEN) {
+        history = [input.current.value, ...historyList]
+      } else {
+        history = [
+          input.current.value,
+          ...historyList.slice(0, historyList.length - 1),
+        ]
+      }
+      writeHistory(history)
+      setHistoryList(history)
+    }
   }
 
   async function gotoBlock(block, inSidebar = false) {
@@ -353,7 +384,7 @@ export default function SmartSearchInput({ onClose }) {
 
   function onBlur(e) {
     // HACK: let possible click run first.
-    setTimeout(outputAndClose, BLUR_WAIT)
+    setTimeout(() => outputAndClose(undefined, true), BLUR_WAIT)
   }
 
   async function findTag(tagQ, tag) {
@@ -415,10 +446,29 @@ export default function SmartSearchInput({ onClose }) {
     if (input.current.value.length === 0) {
       setList([])
       setTagList([])
+      setChosen(0)
       lastQ.current = null
       lastResult.current = []
       lastTagResult.current = []
     }
+  }
+
+  function setInputQuery(e, q, viaClick = false) {
+    e.stopPropagation()
+    e.preventDefault()
+
+    if (viaClick) {
+      // Prevent input from closing due to onblur.
+      closeCalled.current = true
+      // Reset and give focus back after onblur runs.
+      setTimeout(() => {
+        input.current.focus()
+      }, BLUR_WAIT + 1)
+    }
+
+    input.current.value = q
+    // HACK: let input be shown first for better UX.
+    setTimeout(() => performQuery(q), 16)
   }
 
   useEffect(() => {
@@ -426,6 +476,18 @@ export default function SmartSearchInput({ onClose }) {
       .querySelector(".kef-ss-chosen")
       ?.scrollIntoView({ block: "nearest" })
   }, [chosen])
+
+  useEffect(() => {
+    const offHook = logseq.App.onCurrentGraphChanged(async () => {
+      const history = await readHistory()
+      setHistoryList(history)
+    })
+    ;(async () => {
+      const history = await readHistory()
+      setHistoryList(history)
+    })()
+    return offHook
+  }, [])
 
   const inputProps = useCompositionChange(handleQuery)
 
@@ -476,6 +538,18 @@ export default function SmartSearchInput({ onClose }) {
             >
               <div class="kef-ss-tagicon">T</div>
               <div class="kef-ss-listitem-text">{tag.name}</div>
+            </li>
+          ))}
+        {list.length === 0 &&
+          tagList.length === 0 &&
+          (input.current == null || input.current.value.length === 0) &&
+          historyList.map((query, i) => (
+            <li
+              key={i}
+              class={cls("kef-ss-listitem", i === chosen && "kef-ss-chosen")}
+              onClick={(e) => setInputQuery(e, query, true)}
+            >
+              <div class="kef-ss-listitem-text">{query}</div>
             </li>
           ))}
       </ul>
