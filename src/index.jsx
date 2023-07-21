@@ -181,12 +181,36 @@ function provideStyles() {
       position: relative;
     }
     .kef-ss-input {
+      position: relative;
       width: 100%;
       line-height: 1.2rem;
       border: none;
       border-bottom: 1px solid var(--ls-block-bullet-color);
       margin-bottom: 5px;
       background: var(--ls-tertiary-background-color) !important;
+    }
+    @keyframes spin {
+      0% {
+        transform: rotate(0);
+      }
+      100% {
+        transform: rotate(360deg);
+      }
+    }
+    .kef-ss-progress {
+      display: none;
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      font-family: 'tabler-icons';
+      font-size: 0.8em;
+      margin-left: 6px;
+      color: var(--ls-icon-color);
+      will-change: transform;
+      animation: 1s linear infinite spin;
+    }
+    .kef-ss-show {
+      display: block;
     }
     .kef-ss-input:focus {
       box-shadow: none;

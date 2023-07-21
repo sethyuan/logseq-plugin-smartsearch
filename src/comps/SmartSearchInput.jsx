@@ -34,6 +34,7 @@ export default function SmartSearchInput({ onClose, root }) {
   const [chosen, setChosen] = useState(0)
   const [isCompletionRequest, setIsCompletionRequest] = useState(false)
   const [historyList, setHistoryList] = useState([])
+  const [showProgress, setShowProgress] = useState(false)
   const closeCalled = useRef(false)
   const lastQ = useRef()
   const lastResult = useRef([])
@@ -45,7 +46,7 @@ export default function SmartSearchInput({ onClose, root }) {
   const isGlobal = root.classList.contains("kef-ss-global")
 
   const handleQuery = useCallback(
-    debounce((e) => performQuery(e.target.value), 300),
+    debounce((e) => performQuery(e.target.value), 400),
     [],
   )
 
@@ -72,57 +73,64 @@ export default function SmartSearchInput({ onClose, root }) {
     }
 
     lastQ.current = q
-    try {
-      const result = (
-        await top.logseq.api.datascript_query(
-          q,
-          includesValue,
-          containsValue,
-          ge,
-          le,
-          gt,
-          lt,
+    setShowProgress(true)
+    // HACK: wait till progress is shown.
+    setTimeout(async () => {
+      try {
+        const result = (
+          await logseq.DB.datascriptQuery(
+            q,
+            includesValue,
+            containsValue,
+            ge,
+            le,
+            gt,
+            lt,
+          )
         )
-      )
-        .flat()
-        .filter((b) => b["pre-block?"] || b.content)
-        .sort(
-          (a, b) => (b.page["journal-day"] ?? 0) - (a.page["journal-day"] ?? 0),
-        )
-      lastResult.current = result
-      // console.log("query result:", result)
+          .flat()
+          .filter((b) => b["pre-block?"] || b.content)
+          .sort(
+            (a, b) =>
+              (b.page["journal-day"] ?? 0) - (a.page["journal-day"] ?? 0),
+          )
+        lastResult.current = result
+        // console.log("query result:", result)
 
-      if (!tagQ) {
-        setTagList([])
-      } else if (result.length === 0) {
-        findTag(tagQ, tag)
-      }
-
-      for (const block of result) {
-        if (block["pre-block?"]) {
-          const page = await logseq.Editor.getPage(block.page.id)
-          block.content = page.originalName
-        } else if (block.content) {
-          block.content = await parseContent(block.content)
-        } else {
-          block.content = block["original-name"]
+        if (!tagQ) {
+          setTagList([])
+        } else if (result.length === 0) {
+          findTag(tagQ, tag)
         }
+
+        for (const block of result) {
+          if (block["pre-block?"]) {
+            const page = await logseq.Editor.getPage(block.page.id)
+            block.content = page.originalName
+          } else if (block.content) {
+            block.content = await parseContent(block.content)
+          } else {
+            block.content = block["original-name"]
+          }
+        }
+        setList(
+          await postProcessResult(
+            isCompletionRequest
+              ? result.filter((block) => block["pre-block?"])
+              : result,
+            filter,
+            !isCompletionRequest,
+            query,
+          ),
+        )
+        setChosen(0)
+        setIsCompletionRequest(isCompletionRequest)
+      } catch (err) {
+        console.error(err, q)
+      } finally {
+        setShowProgress(false)
       }
-      setList(
-        await postProcessResult(
-          isCompletionRequest
-            ? result.filter((block) => block["pre-block?"])
-            : result,
-          filter,
-          !isCompletionRequest,
-          query,
-        ),
-      )
-      setChosen(0)
-      setIsCompletionRequest(isCompletionRequest)
-    } catch (err) {
-      console.error(err, q)
-    }
+    }, 24)
   }
 
   async function onKeyDown(e) {
@@ -504,17 +512,22 @@ export default function SmartSearchInput({ onClose, root }) {
 
   return (
     <div class="kef-ss-container">
-      <input
-        ref={input}
-        class="kef-ss-input"
-        type="text"
-        placeholder={t("e.g.: #book, @published: 2000; holmes")}
-        {...inputProps}
-        onKeyDown={onKeyDown}
-        onMouseDown={stopPropagation}
-        onFocus={onFocus}
-        onBlur={onBlur}
-      />
+      <div>
+        <input
+          ref={input}
+          class="kef-ss-input"
+          type="text"
+          placeholder={t("e.g.: #book, @published: 2000; holmes")}
+          {...inputProps}
+          onKeyDown={onKeyDown}
+          onMouseDown={stopPropagation}
+          onFocus={onFocus}
+          onBlur={onBlur}
+        />
+        <div class={cls("kef-ss-progress", showProgress && "kef-ss-show")}>
+          &#xeb15;
+        </div>
+      </div>
       <ul ref={ul} class="kef-ss-list">
         {list.map((block, i) => (
           <li
