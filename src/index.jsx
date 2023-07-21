@@ -253,7 +253,7 @@ function provideStyles() {
       align-items: baseline;
     }
     .kef-ss-listitem:hover {
-      background: var(--ls-menu-hover-color);
+      background: var(--ls-quaternary-background-color);
     }
     .kef-ss-chosen {
       background: var(--ls-selection-background-color);
