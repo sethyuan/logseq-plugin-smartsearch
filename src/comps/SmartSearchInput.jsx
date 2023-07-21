@@ -2,7 +2,6 @@ import { t } from "logseq-l10n"
 import { useCallback, useEffect, useMemo, useRef, useState } from "preact/hooks"
 import { debounce } from "rambdax"
 import { cls, useCompositionChange } from "reactutils"
-import { INPUT_ID } from "../libs/cons"
 import {
   buildQuery,
   containsValue,
@@ -24,7 +23,7 @@ import Breadcrumb from "./Breadcrumb"
 const BLUR_WAIT = 200
 const HISTORY_LEN = 30
 
-export default function SmartSearchInput({ onClose }) {
+export default function SmartSearchInput({ onClose, root }) {
   const input = useRef()
   const ul = useRef()
   const [list, setList] = useState([])
@@ -36,12 +35,11 @@ export default function SmartSearchInput({ onClose }) {
   const lastQ = useRef()
   const lastResult = useRef([])
   const lastTagResult = useRef([])
-  const ss = useMemo(() => parent.document.getElementById(INPUT_ID), [])
   const isMac = useMemo(
     () => parent.document.documentElement.classList.contains("is-mac"),
     [],
   )
-  const isGlobal = ss.classList.contains("kef-ss-global")
+  const isGlobal = root.classList.contains("kef-ss-global")
 
   const handleQuery = useCallback(
     debounce((e) => performQuery(e.target.value), 300),
@@ -379,7 +377,7 @@ export default function SmartSearchInput({ onClose }) {
     closeCalled.current = false
     ul.current
       .querySelector(".kef-ss-chosen")
-      ?.scrollIntoView({ block: "center" })
+      ?.scrollIntoView({ block: "nearest" })
   }
 
   function onBlur(e) {
