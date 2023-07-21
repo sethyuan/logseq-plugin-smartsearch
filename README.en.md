@@ -2,7 +2,7 @@
 
 # logseq-plugin-smartsearch
 
-Triggers an input that helps you search various types of data.
+Triggers an input that helps you search various types of data. You can also display one on the right sidebar.
 
 ## Feature Highlights
 
@@ -65,6 +65,18 @@ https://user-images.githubusercontent.com/3410293/218086769-081eadc2-ac02-4cf6-9
 
 # Journals from a specific period that mentioned logseq.
 %j 20221231~20230210, logseq
+```
+
+## How to use Smart Search in the sidebar
+
+First, you need to create a page for it, then write in it the renderer code (`{{renderer :smartsearch}}`), You can refer the following example. Once you have the page, just open it in the right sidebar.
+
+Say you have created a page called "Smart Search":
+
+```
+icon:: 🔍
+
+- {{renderer :smartsearch}}
 ```
 
 ## Buy me a coffee

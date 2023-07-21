@@ -2,7 +2,7 @@
 
 # logseq-plugin-smartsearch
 
-弹出一个可以帮你查找各类数据的输入框。
+弹出一个可以帮你查找各类数据的输入框。也可以在侧边栏使用。
 
 ## 功能展示
 
@@ -66,6 +66,18 @@ https://user-images.githubusercontent.com/3410293/218086769-081eadc2-ac02-4cf6-9
 
 # 某一段时间内的Logseq日记
 %j 20221231~20230210, logseq
+```
+
+## 如何在侧边栏使用
+
+首先为 Smart Search 建立一个特有的页面，然后在里面写入 Smart Search 的块渲染代码（`{{renderer :smartsearch}}`），可参考以下提供的示例。有了这个页面后只要将此页面在侧边栏打开就可以了。
+
+假设你创建了一个名为“Smart Search”的页面：
+
+```
+icon:: 🔍
+
+- {{renderer :smartsearch}}
 ```
 
 ## Buy me a coffee
