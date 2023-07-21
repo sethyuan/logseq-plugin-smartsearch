@@ -33,6 +33,8 @@
 
 https://user-images.githubusercontent.com/3410293/201344817-97631368-3ac5-408f-a196-97d71202705f.mp4
 
+https://github.com/sethyuan/logseq-plugin-smartsearch/assets/3410293/6410c4a5-79dc-4570-a284-98dba0f40156
+
 https://user-images.githubusercontent.com/3410293/203462882-05a03dae-e4d7-46b2-ae52-71f3f99fa72f.mp4
 
 https://user-images.githubusercontent.com/3410293/222097302-680b4ffd-e47c-4194-a49b-4231a42d08ee.mp4
