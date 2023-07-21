@@ -2,6 +2,7 @@ import { t } from "logseq-l10n"
 import { useCallback, useEffect, useMemo, useRef, useState } from "preact/hooks"
 import { debounce } from "rambdax"
 import { cls, useCompositionChange } from "reactutils"
+import EventEmitter from "../libs/event"
 import {
   buildQuery,
   containsValue,
@@ -22,6 +23,8 @@ import Breadcrumb from "./Breadcrumb"
 
 const BLUR_WAIT = 200
 const HISTORY_LEN = 30
+
+const events = new EventEmitter()
 
 export default function SmartSearchInput({ onClose, root }) {
   const input = useRef()
@@ -353,6 +356,7 @@ export default function SmartSearchInput({ onClose, root }) {
       }
       writeHistory(history)
       setHistoryList(history)
+      events.emit("history.change", { fromId: root })
     }
   }
 
@@ -480,11 +484,18 @@ export default function SmartSearchInput({ onClose, root }) {
       const history = await readHistory()
       setHistoryList(history)
     })
-    ;(async () => {
+    async function refreshHistory(data) {
+      if (data?.fromId === root) return
       const history = await readHistory()
       setHistoryList(history)
-    })()
-    return offHook
+    }
+    events.on("history.change", refreshHistory)
+    refreshHistory()
+
+    return () => {
+      events.off("history.change", refreshHistory)
+      offHook()
+    }
   }, [])
 
   const inputProps = useCompositionChange(handleQuery)
