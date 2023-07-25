@@ -316,6 +316,10 @@ async function openInput() {
     inputContainer.classList.add("kef-ss-global")
     inputContainer.style.display = "block"
     inputContainer.querySelector("input").select()
+    render(
+      <SmartSearchInput onClose={closeInput} root={inputContainer} />,
+      inputContainer,
+    )
   }
 }
 
