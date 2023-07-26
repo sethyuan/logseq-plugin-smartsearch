@@ -6,6 +6,7 @@ import { INPUT_ID } from "./libs/cons"
 import {
   buildQuery,
   containsValue,
+  fullTextSearch,
   ge,
   gt,
   includesValue,
@@ -94,25 +95,30 @@ async function main() {
         const [q, filter, tagQ, tag] = buildQuery(key)
 
         try {
-          const result = (
-            await top.logseq.api.datascript_query(
-              q,
-              includesValue,
-              containsValue,
-              ge,
-              le,
-              gt,
-              lt,
-            )
-          )
-            .flat()
-            .filter((b) => b["pre-block?"] || b.content)
+          const result = q.startsWith("[:find ")
+            ? (
+                await top.logseq.api.datascript_query(
+                  q,
+                  includesValue,
+                  containsValue,
+                  ge,
+                  le,
+                  gt,
+                  lt,
+                )
+              )
+                .flat()
+                .filter((b) => b["pre-block?"] || b.content)
+            : await fullTextSearch(q)
 
           if (result.length > 0) {
             for (const block of result) {
               if (block["pre-block?"]) {
-                const page = await logseq.Editor.getPage(block.page.id)
-                block.name = page.name
+                // Full text search page is already processed.
+                if (!block.name) {
+                  const page = await logseq.Editor.getPage(block.page.id)
+                  block.name = page.name
+                }
               } else if (block.content) {
                 block.content = await parseContent(block.content)
               }

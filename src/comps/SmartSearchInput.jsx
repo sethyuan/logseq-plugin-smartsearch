@@ -6,6 +6,7 @@ import EventEmitter from "../libs/event"
 import {
   buildQuery,
   containsValue,
+  fullTextSearch,
   ge,
   gt,
   includesValue,
@@ -77,23 +78,25 @@ export default function SmartSearchInput({ onClose, root }) {
     // HACK: wait till progress is shown.
     setTimeout(async () => {
       try {
-        const result = (
-          await logseq.DB.datascriptQuery(
-            q,
-            includesValue,
-            containsValue,
-            ge,
-            le,
-            gt,
-            lt,
-          )
-        )
-          .flat()
-          .filter((b) => b["pre-block?"] || b.content)
-          .sort(
-            (a, b) =>
-              (b.page["journal-day"] ?? 0) - (a.page["journal-day"] ?? 0),
-          )
+        const result = q.startsWith("[:find ")
+          ? (
+              await logseq.DB.datascriptQuery(
+                q,
+                includesValue,
+                containsValue,
+                ge,
+                le,
+                gt,
+                lt,
+              )
+            )
+              .flat()
+              .filter((b) => b["pre-block?"] || b.content)
+              .sort(
+                (a, b) =>
+                  (b.page["journal-day"] ?? 0) - (a.page["journal-day"] ?? 0),
+              )
+          : await fullTextSearch(q)
         lastResult.current = result
         // console.log("query result:", result)
 
@@ -105,8 +108,11 @@ export default function SmartSearchInput({ onClose, root }) {
 
         for (const block of result) {
           if (block["pre-block?"]) {
-            const page = await logseq.Editor.getPage(block.page.id)
-            block.content = page.originalName
+            // Full text search page is already processed.
+            if (!block.name) {
+              const page = await logseq.Editor.getPage(block.page.id)
+              block.content = page.originalName
+            }
           } else if (block.content) {
             block.content = await parseContent(block.content)
           } else {

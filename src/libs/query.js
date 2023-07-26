@@ -53,6 +53,8 @@ export function buildQuery(q) {
   const conds = (filterIndex > -1 ? q.substring(0, filterIndex) : q)
     .split(/[,，]/)
     .map((s) => s.trim())
+  if (conds.length === 1 && !"#@>%[》【".includes(conds[0][0]))
+    return [conds[0]]
   const lastCond = conds[conds.length - 1]
   const isCompletionRequest = [">", "》"].includes(lastCond?.[0])
   const condStr = isCompletionRequest
@@ -389,4 +391,30 @@ function parseDateRange(rangeStr) {
     .flat()
   if (range.length < 2) return []
   return [range[0], range[range.length - 1]]
+}
+
+export async function fullTextSearch(q) {
+  const res = await logseq.App.search(q)
+  const pages = res.pages.map((name) => ({
+    "pre-block?": true,
+    name,
+    content: name,
+  }))
+  const blocks = (
+    await Promise.all(
+      res.blocks.map(async (info) => {
+        const block = await logseq.Editor.getBlock(info["block/uuid"])
+        if (block["preBlock?"]) {
+          const page = await logseq.Editor.getPage(block.page.id)
+          if (pages.find(({ name }) => name === page.originalName)) {
+            block._remove = true
+          } else {
+            block["pre-block?"] = true
+          }
+        }
+        return block
+      }),
+    )
+  ).filter((block) => !block._remove)
+  return [...pages, ...blocks]
 }
