@@ -1,6 +1,5 @@
 {
   "Shortcut key to trigger the smartsearch input.": "触发智能搜索输入框的快捷键。",
-  "Whether to enable the search provider integration.": "是否开启搜索集成。",
   "Whether to enable matching with pinyin.": "是否开启拼音匹配。",
   "Trigger smartsearch input": "触发智能搜索的输入框",
   "e.g.: #book, @published: 2000; holmes": "示例：#书，@出版于：2000；福尔摩斯",
