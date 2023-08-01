@@ -24,7 +24,7 @@ Triggers an input that helps you search various types of data. You can also disp
 - Make combinations of text, tags, properties, tasks and journal blocks, separate them with a `,`. Format `#Book, @published: 2022`.
 - Put a `;` at the end to further filter the results. E.g, `#book; holmes`.
 - Select using keyboard arrow keys or mouse.
-- Select (Enter or click) to insert reference, hold `cmd` or `ctrl` to insert embeds, hold `opt` or `alt` to insert text content.
+- Select (Enter or click) to insert reference, hold `cmd` or `ctrl` to insert embeds, hold `cmd+shift` or `ctrl+shift` to insert children embeds (requires the Another Embed plugin to handle children embeds), hold `opt` or `alt` to insert text content.
 - Hold `shift` and select to go to the page or block，hold `shift+alt` and select to open the page or block in the right sidebar.
 - Support Chinese Pinyin.
 
