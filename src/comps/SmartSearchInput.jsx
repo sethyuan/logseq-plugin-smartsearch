@@ -199,13 +199,22 @@ export default function SmartSearchInput({ onClose, root }) {
             outputAndClose()
           } else if (
             isMac
-              ? e.metaKey && !e.shiftKey && !e.ctrlKey && !e.altKey
+              ? e.metaKey && !e.ctrlKey && !e.shiftKey && !e.altKey
               : e.ctrlKey && !e.metaKey && !e.shiftKey && !e.altKey
           ) {
             e.stopPropagation()
             e.preventDefault()
             if (isGlobal) return
             outputEmbed(list[chosen])
+          } else if (
+            isMac
+              ? e.metaKey && !e.ctrlKey && e.shiftKey && !e.altKey
+              : e.ctrlKey && !e.metaKey && e.shiftKey && !e.altKey
+          ) {
+            e.stopPropagation()
+            e.preventDefault()
+            if (isGlobal) return
+            outputEmbedChildren(list[chosen])
           }
         } else if (tagList.length > 0) {
           if (!e.shiftKey && !e.ctrlKey && !e.metaKey && !e.altKey) {
@@ -307,6 +316,13 @@ export default function SmartSearchInput({ onClose, root }) {
     ) {
       if (isGlobal) return
       outputEmbed(block)
+    } else if (
+      isMac
+        ? e.metaKey && !e.ctrlKey && e.shiftKey && !e.altKey
+        : e.ctrlKey && !e.metaKey && e.shiftKey && !e.altKey
+    ) {
+      if (isGlobal) return
+      outputEmbedChildren(block)
     }
   }
 
@@ -339,6 +355,15 @@ export default function SmartSearchInput({ onClose, root }) {
     } else {
       persistBlockUUID(block)
       outputAndClose(`{{embed ((${block.uuid}))}}`)
+    }
+  }
+
+  function outputEmbedChildren(block) {
+    if (block["pre-block?"]) {
+      outputAndClose(`[[.embed-children]]{{embed [[${block.content}]]}}`)
+    } else {
+      persistBlockUUID(block)
+      outputAndClose(`[[.embed-children]]{{embed ((${block.uuid}))}}`)
     }
   }
 
@@ -587,12 +612,12 @@ export default function SmartSearchInput({ onClose, root }) {
             ? isGlobal
               ? t("select=goto; ⇧=sidebar")
               : t(
-                  "select=ref; ⌘=embed; ⌥=content; ⇧=goto; ⇧+⌥=sidebar; ⇥=complete",
+                  "select=ref; ⌘=embed; ⌘+⇧=embed children; ⌥=content; ⇧=goto; ⇧+⌥=sidebar; ⇥=complete",
                 )
             : isGlobal
             ? t("select=goto; shift=sidebar")
             : t(
-                "select=ref; ctrl=embed; alt=content; shift=goto; shift+alt=sidebar; tab=complete",
+                "select=ref; ctrl=embed; ctrl+shift=embed children; alt=content; shift=goto; shift+alt=sidebar; tab=complete",
               )
           : tagList.length > 0 || (isCompletionRequest && list.length > 0)
           ? isMac
