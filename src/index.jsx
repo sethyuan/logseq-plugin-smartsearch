@@ -208,6 +208,9 @@ function provideStyles() {
       background: var(--ls-secondary-background-color);;
       border: none;
     }
+    .kef-ss-keyword-highlight {
+      background-color: var(--ls-page-mark-bg-color);
+    }
   `)
 }
 

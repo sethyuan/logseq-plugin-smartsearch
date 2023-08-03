@@ -292,6 +292,19 @@ export async function postProcessResult(
     )
     .slice(0, limit)
 
+  if (query) {
+    const keywords = query
+      .split(/[,，]/)
+      .map((s) => s.trim())
+      .filter((s) => !"#@>%[》【".includes(s[0]))
+
+    if (keywords.length > 0) {
+      for (const block of blocks) {
+        block.content = highlightKeywords(keywords, block.content)
+      }
+    }
+  }
+
   if (needBreadcrumb) {
     for (const block of blocks) {
       await setBlockBreadcrumb(block)
@@ -411,10 +424,34 @@ export async function fullTextSearch(q) {
           } else {
             block["pre-block?"] = true
           }
+        } else {
+          const keywords = q.split(/ +/)
+          block.content = highlightKeywords(keywords, block.content)
         }
         return block
       }),
     )
   ).filter((block) => !block._remove)
   return [...pages, ...blocks]
+}
+
+function highlightKeywords(keywords, text) {
+  const loweredText = text.toLowerCase()
+  keywords = keywords
+    .map((keyword) => [loweredText.indexOf(keyword.toLowerCase()), keyword])
+    .sort(([a], [b]) => a - b)
+  const segments = []
+  let lastIndex = 0
+  for (const [keywordIndex, keyword] of keywords) {
+    segments.push(text.substring(lastIndex, keywordIndex))
+    lastIndex = keywordIndex + keyword.length
+    segments.push(
+      `<span class="kef-ss-keyword-highlight">${text.substring(
+        keywordIndex,
+        lastIndex,
+      )}</span>`,
+    )
+  }
+  segments.push(text.substring(lastIndex))
+  return segments.join("")
 }
