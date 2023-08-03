@@ -205,7 +205,7 @@ function provideStyles() {
       box-shadow: none;
       height: calc(100vh - 230px);
       max-height: initial;
-      background: initial;
+      background: var(--ls-secondary-background-color);;
       border: none;
     }
   `)
