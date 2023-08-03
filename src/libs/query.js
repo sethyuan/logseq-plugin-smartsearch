@@ -261,6 +261,7 @@ export async function postProcessResult(
   filter,
   needBreadcrumb = false,
   query,
+  isFullTextSearch = false,
   limit = 100,
 ) {
   const pageResult =
@@ -293,10 +294,12 @@ export async function postProcessResult(
     .slice(0, limit)
 
   if (query) {
-    const keywords = query
-      .split(/[,，]/)
-      .map((s) => s.trim())
-      .filter((s) => !"#@>%[》【".includes(s[0]))
+    const keywords = isFullTextSearch
+      ? query.split(/ +/)
+      : query
+          .split(/[,，]/)
+          .map((s) => s.trim())
+          .filter((s) => !"#@>%[》【".includes(s[0]))
 
     if (keywords.length > 0) {
       for (const block of blocks) {
@@ -424,9 +427,6 @@ export async function fullTextSearch(q) {
           } else {
             block["pre-block?"] = true
           }
-        } else {
-          const keywords = q.split(/ +/)
-          block.content = highlightKeywords(keywords, block.content)
         }
         return block
       }),

@@ -78,8 +78,10 @@ export default function SmartSearchInput({ onClose, root }) {
     // HACK: wait till progress is shown.
     setTimeout(async () => {
       try {
-        const result = q.startsWith("[:find ")
-          ? (
+        const isFullTextSearch = !q.startsWith("[:find ")
+        const result = isFullTextSearch
+          ? await fullTextSearch(q)
+          : (
               await logseq.DB.datascriptQuery(
                 q,
                 includesValue,
@@ -96,7 +98,7 @@ export default function SmartSearchInput({ onClose, root }) {
                 (a, b) =>
                   (b.page["journal-day"] ?? 0) - (a.page["journal-day"] ?? 0),
               )
-          : await fullTextSearch(q)
+
         lastResult.current = result
         // console.log("query result:", result)
 
@@ -127,6 +129,7 @@ export default function SmartSearchInput({ onClose, root }) {
             filter,
             !isCompletionRequest,
             query,
+            isFullTextSearch,
           ),
         )
         setChosen(0)
