@@ -579,9 +579,11 @@ export default function SmartSearchInput({ onClose, root }) {
             </div>
             <div class="kef-ss-listitem-text">
               {block.breadcrumb && <Breadcrumb segments={block.breadcrumb} />}
-              {block.content.split("\n").map((line) => (
-                <p key={line} dangerouslySetInnerHTML={{ __html: line }} />
-              ))}
+              {(block.highlightContent ?? block.content)
+                .split("\n")
+                .map((line) => (
+                  <p key={line} dangerouslySetInnerHTML={{ __html: line }} />
+                ))}
             </div>
           </li>
         ))}

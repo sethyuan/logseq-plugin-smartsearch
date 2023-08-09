@@ -303,7 +303,7 @@ export async function postProcessResult(
 
     if (keywords.length > 0) {
       for (const block of blocks) {
-        block.content = highlightKeywords(keywords, block.content)
+        block.highlightContent = highlightKeywords(keywords, block.content)
       }
     }
   }
