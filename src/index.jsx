@@ -197,7 +197,7 @@ function provideStyles() {
     }
     .kef-ss-inline .kef-ss-container {
       width: calc(100% + 40px);
-      margin-left: -40px;
+      margin-left: -28px;
       margin-top: 20px;
       background: initial;
     }
