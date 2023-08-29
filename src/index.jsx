@@ -166,6 +166,7 @@ function provideStyles() {
       cursor: pointer;
       display: flex;
       align-items: baseline;
+      user-select: none;
     }
     .kef-ss-listitem:hover {
       background: var(--ls-quaternary-background-color);

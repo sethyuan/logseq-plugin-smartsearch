@@ -405,7 +405,7 @@ export default function SmartSearchInput({ onClose, root }) {
   async function gotoBlock(block, inSidebar = false) {
     if (block["pre-block?"]) {
       if (inSidebar) {
-        const page = await logseq.Editor.getPage(block.page.id)
+        const page = await logseq.Editor.getPage(block.name ?? block.page.id)
         logseq.Editor.openInRightSidebar(page.uuid)
       } else {
         logseq.Editor.scrollToBlockInPage(block.content)
