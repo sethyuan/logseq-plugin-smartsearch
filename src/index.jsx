@@ -1,6 +1,6 @@
 import "@logseq/libs"
 import { setup, t } from "logseq-l10n"
-import { render } from "preact"
+import { createRef, render } from "preact"
 import SmartSearchInput from "./comps/SmartSearchInput"
 import { INPUT_ID } from "./libs/cons"
 import { setDateOptions } from "./libs/query"
@@ -10,6 +10,8 @@ let inputContainer
 let inputContainerParent
 let textarea
 let lastBlock
+
+const inputRef = createRef()
 
 async function main() {
   await setup({ builtinTranslations: { "zh-CN": zhCN } })
@@ -63,7 +65,11 @@ async function main() {
     inputContainer = parent.document.getElementById(INPUT_ID)
     inputContainerParent = inputContainer.parentNode
     render(
-      <SmartSearchInput onClose={closeInput} root={inputContainer} />,
+      <SmartSearchInput
+        ref={inputRef}
+        onClose={closeInput}
+        root={inputContainer}
+      />,
       inputContainer,
     )
   }, 0)
@@ -223,7 +229,7 @@ function triggerInput() {
   }
 }
 
-async function openInput() {
+async function openInput(prefilled) {
   textarea = parent.document.activeElement
   const editor = textarea.closest(".block-editor")
   if (editor) {
@@ -231,14 +237,16 @@ async function openInput() {
     editor.appendChild(inputContainer)
     inputContainer.style.display = "block"
     inputContainer.querySelector("input").select()
+    if (prefilled) {
+      inputRef.current?.fill(prefilled)
+    }
   } else {
     inputContainer.classList.add("kef-ss-global")
     inputContainer.style.display = "block"
     inputContainer.querySelector("input").select()
-    render(
-      <SmartSearchInput onClose={closeInput} root={inputContainer} />,
-      inputContainer,
-    )
+    if (prefilled) {
+      inputRef.current?.fill(prefilled)
+    }
   }
 }
 
@@ -298,4 +306,8 @@ async function macroRenderer({ slot, payload: { arguments: args, uuid } }) {
   }, 0)
 }
 
-logseq.ready(main).catch(console.error)
+const model = {
+  openInput,
+}
+
+logseq.ready(model, main).catch(console.error)

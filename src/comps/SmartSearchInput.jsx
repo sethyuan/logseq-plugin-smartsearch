@@ -1,5 +1,13 @@
 import { t } from "logseq-l10n"
-import { useCallback, useEffect, useMemo, useRef, useState } from "preact/hooks"
+import { forwardRef } from "preact/compat"
+import {
+  useCallback,
+  useEffect,
+  useImperativeHandle,
+  useMemo,
+  useRef,
+  useState,
+} from "preact/hooks"
 import { debounce } from "rambdax"
 import { cls, useCompositionChange } from "reactutils"
 import EventEmitter from "../libs/event"
@@ -27,7 +35,7 @@ const HISTORY_LEN = 30
 
 const events = new EventEmitter()
 
-export default function SmartSearchInput({ onClose, root }) {
+export default forwardRef(function SmartSearchInput({ onClose, root }, ref) {
   const input = useRef()
   const ul = useRef()
   const [list, setList] = useState([])
@@ -50,6 +58,13 @@ export default function SmartSearchInput({ onClose, root }) {
     debounce((e) => performQuery(e.target.value), 400),
     [],
   )
+
+  useImperativeHandle(ref, () => ({
+    fill(prefilled) {
+      input.current.value = prefilled
+      performQuery(prefilled)
+    },
+  }))
 
   async function performQuery(query) {
     const [q, filter, tagQ, tag, isCompletionRequest] = buildQuery(query)
@@ -634,4 +649,4 @@ export default function SmartSearchInput({ onClose, root }) {
       </div>
     </div>
   )
-}
+})
