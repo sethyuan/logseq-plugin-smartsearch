@@ -1,4 +1,4 @@
-中文 | [English](README.en.md)
+中文 | [English](README.en.md) | [日本語](README.ja.md)
 
 # logseq-plugin-smartsearch
 
