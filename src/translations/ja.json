@@ -1,0 +1,11 @@
+{
+  "Shortcut key to trigger the smartsearch input.": "スマートサーチ入力をトリガーするショートカットキー。",
+  "Whether to enable matching with pinyin.": "ピンインによる一致を有効にするかどうか。",
+  "Trigger smartsearch input": "スマートサーチ入力をトリガー",
+  "e.g.: #book, @published: 2000; holmes": "例：#book、@published: 2000; holmes",
+  "#[!]tag, ##tag, #>tag, >tag, @[!]prop: value, @prop [=<>]1, @prop~ -1wd, []nltidwc, %j -1wd, ;filter": "#[!]タグ、##タグ、#>タグ、>タグ、@[!]プロパティ: 値、@プロパティ [=<>]1、@プロパティ~ -1wd、[]nltidwc、%j -1wd、;フィルタ",
+  "select=ref; ⌘=embed; ⌘+⇧=embed children; ⌥=content; ⇧=goto; ⇧+⌥=sidebar; ⇥=complete": "選択=参照: ⌘=埋め込み: ⌘+⇧=子を埋め込む: ⌥=コンテンツ: ⇧=移動: ⇧+⌥=サイドバー: ⇥=完了",
+  "select=ref; ctrl=embed; ctrl+shift=embed children; alt=content; shift=goto; shift+alt=sidebar; tab=complete": "選択=参照: ctrl=埋め込み: ctrl+shift=子を埋め込む: alt=コンテンツ: shift=移動: shift+alt=サイドバー: tab=完了",
+  "select=complete; ⇥=complete; ⇧=goto; ⇧+⌥=sidebar": "選択=完了: ⇥=完了: ⇧=移動: ⇧+⌥=サイドバー",
+  "select=complete; tab=complete; shift=goto; shift+alt=sidebar": "選択=完了: tab=完了: shift=移動: shift+alt=サイドバー"
+}

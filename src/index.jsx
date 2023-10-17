@@ -5,6 +5,7 @@ import SmartSearchInput from "./comps/SmartSearchInput"
 import { INPUT_ID } from "./libs/cons"
 import { setDateOptions } from "./libs/query"
 import zhCN from "./translations/zh-CN.json"
+import ja from "./translations/ja.json"
 
 let inputContainer
 let inputContainerParent
@@ -14,7 +15,7 @@ let lastBlock
 const inputRef = createRef()
 
 async function main() {
-  await setup({ builtinTranslations: { "zh-CN": zhCN } })
+  await setup({ builtinTranslations: { "zh-CN": zhCN,ja } })
 
   const { preferredDateFormat, preferredStartOfWeek } =
     await logseq.App.getUserConfigs()
