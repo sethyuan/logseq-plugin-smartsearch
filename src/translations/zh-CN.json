@@ -3,7 +3,7 @@
   "(Chinese only) Whether to enable matching with pinyin.": "是否开启拼音匹配。",
   "Trigger smartsearch input": "触发智能搜索的输入框",
   "https://github.com/sethyuan/logseq-plugin-smartsearch/blob/master/README.en.md": "https://github.com/sethyuan/logseq-plugin-smartsearch",
-  "e.g.: #book, @published: 2000; holmes": "示例：#书，@出版于：2000；福尔摩斯",
+  "Here. To find related pages, type >keyword": "示例：#书，@出版于：2000；福尔摩斯",
   "Searching Blocks with Keywords or \"#Tag Names\"": "使用关键字或“#标签名称”搜索块",
   "Use a comma (,) for AND searches.": "使用逗号（,）进行AND搜索。",
   "#>tag name :Targets child blocks.": "#>标签名称 ：目标子块。",
@@ -15,5 +15,6 @@
   "[Key combination]  select=goto; shift=sidebar": "[同时按下键]  选择=跳转；shift=侧边栏",
   "[Key combination]  select=goto; ⇧=sidebar": "[同时按下键]  选择=跳转；⇧=侧边栏",
   "[Key combination]  select=complete; ⇥=complete; ⇧=goto; ⇧+⌥=sidebar": "[同时按下键]  选择=上屏；⇥=上屏；⇧=跳转；⇧+⌥=侧边栏",
-  "[Key combination]  select=complete; tab=complete; shift=goto; shift+alt=sidebar": "[同时按下键]  选择=上屏；tab=上屏；shift=跳转；shift+alt=侧边栏"
+  "[Key combination]  select=complete; tab=complete; shift=goto; shift+alt=sidebar": "[同时按下键]  选择=上屏；tab=上屏；shift=跳转；shift+alt=侧边栏",
+  "Learn more": "了解更多"
 }

@@ -566,7 +566,7 @@ export default forwardRef(function SmartSearchInput({ onClose, root }, ref) {
           ref={input}
           class="kef-ss-input"
           type="text"
-          placeholder={t("e.g.: #book, @published: 2000; holmes")}
+          placeholder={t("Here. To find related pages, type >keyword")}
           {...inputProps}
           onKeyDown={onKeyDown}
           onMouseDown={stopPropagation}
@@ -641,7 +641,7 @@ export default forwardRef(function SmartSearchInput({ onClose, root }, ref) {
             : t("[Key combination]  select=complete; tab=complete; shift=goto; shift+alt=sidebar")
           : desc()
           }
-          <p style="text-align: right;">Smart Search --- ${t("Learn more: ")}<a href={t("https://github.com/sethyuan/logseq-plugin-smartsearch/blob/master/README.en.md")} target="_blank">[README]</a></p>
+          <p style="text-align: right;">Smart Search --- <a href={t("https://github.com/sethyuan/logseq-plugin-smartsearch/blob/master/README.en.md")} target="_blank">{t("Learn more")}</a></p>
       </div>
     </div>
   )

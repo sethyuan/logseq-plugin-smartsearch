@@ -2,7 +2,7 @@
   "Shortcut key to trigger the smartsearch input.": "スマート検索ボックスを呼び出すためのショートカットキーの指定",
   "(Chinese only) Whether to enable matching with pinyin.": "中国語のみ。ピンインによる一致を有効にするかどうか",
   "Trigger smartsearch input": "スマート検索ボックスの呼び出し",
-  "e.g.: #book, @published: 2000; holmes": "ここに入力。関連するページを探すには「>キーワード」",
+  "Here. To find related pages, type >keyword": "ここに入力。関連するページを探すには「>キーワード」",
   "https://github.com/sethyuan/logseq-plugin-smartsearch/blob/master/README.en.md": "https://github.com/sethyuan/logseq-plugin-smartsearch/blob/master/README.ja.md",
   "Searching Blocks with Keywords or \"#Tag Names\"": "キーワードや「#タグ名」でブロックを検索する場合",
   "Use a comma (,) for AND searches.": "カンマ記号「,」でAND検索",
@@ -15,5 +15,6 @@
   "[Key combination]  select=goto; shift=sidebar": "[キーの同時押し]  選択: ページに移動、Shift: サイドバーに開く",
   "[Key combination]  select=goto; ⇧=sidebar": "[キーの同時押し]  選択: ページに移動、⇧: サイドバーに開く",
   "[Key combination]  select=complete; ⇥=complete; ⇧=goto; ⇧+⌥=sidebar": "[キーの同時押し]  選択: 完了、⇥: 完了、⇧: ページに移動、⇧+⌥: サイドバーに開く",
-  "[Key combination]  select=complete; tab=complete; shift=goto; shift+alt=sidebar": "[キーの同時押し]  選択: 完了、Tab: 完了、Shift: ページに移動、Shift+Alt: サイドバーに開く"
+  "[Key combination]  select=complete; tab=complete; shift=goto; shift+alt=sidebar": "[キーの同時押し]  選択: 完了、Tab: 完了、Shift: ページに移動、Shift+Alt: サイドバーに開く",
+  "Learn more": "詳細はこちら"
 }
