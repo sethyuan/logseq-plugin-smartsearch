@@ -630,23 +630,38 @@ export default forwardRef(function SmartSearchInput({ onClose, root }, ref) {
         {list.length > 0 && !isCompletionRequest
           ? isMac
             ? isGlobal
-              ? t("select=goto; ⇧=sidebar")
-              : t(
-                  "select=ref; ⌘=embed; ⌘+⇧=embed children; ⌥=content; ⇧=goto; ⇧+⌥=sidebar; ⇥=complete",
-                )
+              ? t("[Key combination]  select=goto; ⇧=sidebar")
+              : t("[Key combination]  select=ref; ⌘=embed; ⌘+⇧=embed children; ⌥=content; ⇧=goto; ⇧+⌥=sidebar; ⇥=complete")
             : isGlobal
-            ? t("select=goto; shift=sidebar")
-            : t(
-                "select=ref; ctrl=embed; ctrl+shift=embed children; alt=content; shift=goto; shift+alt=sidebar; tab=complete",
-              )
+            ? t("[Key combination]  select=goto; shift=sidebar")
+            : t("[Key combination]  select=ref; ctrl=embed; ctrl+shift=embed children; alt=content; shift=goto; shift+alt=sidebar; tab=complete")
           : tagList.length > 0 || (isCompletionRequest && list.length > 0)
           ? isMac
-            ? t("select=complete; ⇥=complete; ⇧=goto; ⇧+⌥=sidebar")
-            : t("select=complete; tab=complete; shift=goto; shift+alt=sidebar")
-          : t(
-              "#[!]tag, ##tag, #>tag, >tag, @[!]prop: value, @prop [=<>]1, @prop~ -1w~d, []nltidwc, %j -1w~d, ;filter",
-            )}
+            ? t("[Key combination]  select=complete; ⇥=complete; ⇧=goto; ⇧+⌥=sidebar")
+            : t("[Key combination]  select=complete; tab=complete; shift=goto; shift+alt=sidebar")
+          : desc()
+          }
+          <p style="text-align: right;"><a href={t("https://github.com/sethyuan/logseq-plugin-smartsearch/blob/master/README.en.md")} target="_blank">README</a></p>
       </div>
     </div>
   )
 })
+
+const desc =()=> {
+  return  (
+            <div data-smartSearch="desc">
+              <details open>
+                <summary>
+                  <h4>{t("Searching Blocks with Keywords or \"#Tag Names\"")}</h4>
+                </summary>
+                <ul>
+                  <li>{t("Use a comma (,) for AND searches.")}</li>
+                  <li>{t("#>tag name :Targets child blocks.")}</li>
+                  <li>{t("##tag name :Includes descendant blocks.")}</li>
+                  <li>{t("#[!]tag name :Excludes specific tags.")}</li>
+                  <li>{t("[]t: Represents TODO tasks.")}</li>
+                </ul>
+              </details>
+            </div>
+          )
+}

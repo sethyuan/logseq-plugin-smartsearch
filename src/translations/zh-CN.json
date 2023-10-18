@@ -2,10 +2,18 @@
   "Shortcut key to trigger the smartsearch input.": "触发智能搜索输入框的快捷键。",
   "Whether to enable matching with pinyin.": "是否开启拼音匹配。",
   "Trigger smartsearch input": "触发智能搜索的输入框",
+  "https://github.com/sethyuan/logseq-plugin-smartsearch/blob/master/README.en.md": "https://github.com/sethyuan/logseq-plugin-smartsearch",
   "e.g.: #book, @published: 2000; holmes": "示例：#书，@出版于：2000；福尔摩斯",
-  "#[!]tag, ##tag, #>tag, >tag, @[!]prop: value, @prop [=<>]1, @prop~ -1w~d, []nltidwc, %j -1w~d, ;filter": "#[!]标签, ##标签, #>标签, >标签, @[!]属性: 值, @属性 [=<>]1, @属性~ -1w~d, []nltidwc, %j -1w~d, ;文字过滤",
-  "select=ref; ⌘=embed; ⌘+⇧=embed children; ⌥=content; ⇧=goto; ⇧+⌥=sidebar; ⇥=complete": "选择=引用；⌘=嵌入；⌘+⇧=嵌入子级; ⌥=内容；⇧=跳转；⇧+⌥=侧边栏；⇥=上屏",
-  "select=ref; ctrl=embed; ctrl+shift=embed children; alt=content; shift=goto; shift+alt=sidebar; tab=complete": "选择=引用；ctrl=嵌入；ctrl+shift=嵌入子级；alt=内容；shift=跳转；shift+alt=侧边栏；tab=上屏",
-  "select=complete; ⇥=complete; ⇧=goto; ⇧+⌥=sidebar": "选择=上屏；⇥=上屏；⇧=跳转；⇧+⌥=侧边栏",
-  "select=complete; tab=complete; shift=goto; shift+alt=sidebar": "选择=上屏；tab=上屏；shift=跳转；shift+alt=侧边栏"
+  "Searching Blocks with Keywords or \"#Tag Names\"": "使用关键字或“#标签名称”搜索块",
+  "Use a comma (,) for AND searches.": "使用逗号（,）进行AND搜索。",
+  "#>tag name :Targets child blocks.": "#>标签名称 ：目标子块。",
+  "##tag name :Includes descendant blocks.": "##标签名称 ：包含后代块。",
+  "#[!]tag name :Excludes specific tags.": "#[!]标签名称 ：排除特定标签。",
+  "[]t: Represents TODO tasks.": "[]t :代表待办任务。",
+  "[Key combination]  select=ref; ⌘=embed; ⌘+⇧=embed children; ⌥=content; ⇧=goto; ⇧+⌥=sidebar; ⇥=complete": "[同时按下键]  选择=引用；⌘=嵌入；⌘+⇧=嵌入子级; ⌥=内容；⇧=跳转；⇧+⌥=侧边栏；⇥=上屏",
+  "[Key combination]  select=ref; ctrl=embed; ctrl+shift=embed children; alt=content; shift=goto; shift+alt=sidebar; tab=complete": "[同时按下键]  选择=引用；ctrl=嵌入；ctrl+shift=嵌入子级；alt=内容；shift=跳转；shift+alt=侧边栏；tab=上屏",
+  "[Key combination]  select=goto; shift=sidebar": "[同时按下键]  选择=跳转；shift=侧边栏",
+  "[Key combination]  select=goto; ⇧=sidebar": "[同时按下键]  选择=跳转；⇧=侧边栏",
+  "[Key combination]  select=complete; ⇥=complete; ⇧=goto; ⇧+⌥=sidebar": "[同时按下键]  选择=上屏；⇥=上屏；⇧=跳转；⇧+⌥=侧边栏",
+  "[Key combination]  select=complete; tab=complete; shift=goto; shift+alt=sidebar": "[同时按下键]  选择=上屏；tab=上屏；shift=跳转；shift+alt=侧边栏"
 }
