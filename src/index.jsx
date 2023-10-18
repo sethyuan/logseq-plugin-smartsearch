@@ -6,7 +6,7 @@ import { INPUT_ID } from "./libs/cons";
 import { setDateOptions } from "./libs/query";
 import zhCN from "./translations/zh-CN.json";
 import ja from "./translations/ja.json";
-
+import ko from "./translations/ko.json";
 let inputContainer;
 let inputContainerParent;
 let textarea;
@@ -15,7 +15,7 @@ let lastBlock;
 const inputRef = createRef();
 
 async function main() {
-  await setup({ builtinTranslations: { "zh-CN": zhCN, ja } });
+  await setup({ builtinTranslations: { "zh-CN": zhCN, ja, ko } });
 
   const { preferredDateFormat, preferredStartOfWeek } =
     await logseq.App.getUserConfigs();
