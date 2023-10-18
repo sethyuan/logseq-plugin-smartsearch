@@ -1,6 +1,6 @@
 {
   "Shortcut key to trigger the smartsearch input.": "スマート検索ボックスを呼び出すためのショートカットキーの指定",
-  "Whether to enable matching with pinyin.": "ピンインによる一致を有効にするかどうか。",
+  "(Chinese only) Whether to enable matching with pinyin.": "中国語のみ。ピンインによる一致を有効にするかどうか",
   "Trigger smartsearch input": "スマート検索ボックスの呼び出し",
   "e.g.: #book, @published: 2000; holmes": "ここに入力。関連するページを探すには「>キーワード」",
   "https://github.com/sethyuan/logseq-plugin-smartsearch/blob/master/README.en.md": "https://github.com/sethyuan/logseq-plugin-smartsearch/blob/master/README.ja.md",

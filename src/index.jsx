@@ -35,7 +35,7 @@ async function main() {
       key: "enablePinyin",
       type: "boolean",
       default: false,
-      description: t("Whether to enable matching with pinyin."),
+      description: t("(Chinese only) Whether to enable matching with pinyin."),
     },
   ]);
 
