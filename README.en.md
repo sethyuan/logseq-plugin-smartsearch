@@ -6,6 +6,7 @@ In Logseq, it provides the ability to search data based on various criteria. It 
 
 1. Input Assistance for Links and References:
    > As an alternative to the input suggestions displayed with `#` and `[[]]` in Logseq's standard features.
+   - Previously entered content is listed below. The input field remains uncleared, allowing for the quick creation of relevant links without the need for additional input.
 
 2. Conditional Search (AND Search):
    > If the blocks are written in the journal, they will be sorted by date.
