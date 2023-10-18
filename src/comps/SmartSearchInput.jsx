@@ -641,7 +641,7 @@ export default forwardRef(function SmartSearchInput({ onClose, root }, ref) {
             : t("[Key combination]  select=complete; tab=complete; shift=goto; shift+alt=sidebar")
           : desc()
           }
-          <p style="text-align: right;"><a href={t("https://github.com/sethyuan/logseq-plugin-smartsearch/blob/master/README.en.md")} target="_blank">README</a></p>
+          <p style="text-align: right;">Smart Search --- ${t("Learn more: ")}<a href={t("https://github.com/sethyuan/logseq-plugin-smartsearch/blob/master/README.en.md")} target="_blank">[README]</a></p>
       </div>
     </div>
   )
@@ -652,7 +652,7 @@ const desc =()=> {
             <div data-smartSearch="desc">
               <details open>
                 <summary>
-                  <h4>{t("Searching Blocks with Keywords or \"#Tag Names\"")}</h4>
+                  <span data-smartSearch="inputHintTitle">{t("Searching Blocks with Keywords or \"#Tag Names\"")}</span>
                 </summary>
                 <ul>
                   <li>{t("Use a comma (,) for AND searches.")}</li>
