@@ -34,7 +34,7 @@ async function main() {
       key: "enablePinyin",
       type: "boolean",
       default: false,
-      description: t("Whether to enable matching with pinyin."),
+      description: t("(Chinese only) Whether to enable matching with pinyin."),
     },
   ])
 
@@ -97,7 +97,7 @@ function provideStyles() {
     }
     .kef-ss-container {
       background: var(--ls-primary-background-color);
-      min-width: 350px;
+      min-width: 360px;
       max-width: 800px;
       position: relative;
     }
@@ -109,6 +109,7 @@ function provideStyles() {
       border-bottom: 1px solid var(--ls-block-bullet-color);
       margin-bottom: 5px;
       background: var(--ls-tertiary-background-color) !important;
+      box-shadow: 1px 1px 4px 0 var(--ls-border-color) !important;
     }
     @keyframes spin {
       0% {
@@ -139,19 +140,21 @@ function provideStyles() {
       border-bottom: 1px solid var(--ls-block-bullet-color);
     }
     .kef-ss-input::placeholder {
-      font-size: 0.75em;
+      font-size: 0.8em;
       color: var(--ls-secondary-text-color);
     }
     .kef-ss-inputhint {
       position: absolute;
       top: 0;
       left: 0;
-      transform: translateY(-100%);
-      padding-left: 2px;
-      font-size: 0.75em;
+      transform: translateY(-110%);
+      padding: 0 0.5em;
+      font-size: 0.8em;
       line-height: 2;
-      color: var(--ls-secondary-text-color);
-      background: var(--ls-primary-background-color);
+      color: var(--ls-primary-background-color);
+      background: var(--ls-primary-text-color);
+      opacity: 0.8;
+      border-radius: 2px;
     }
     .kef-ss-list {
       list-style-type: none;
@@ -197,6 +200,12 @@ function provideStyles() {
       margin-left: 0.2rem;
       margin-right: 0.2rem;
     }
+    .kef-ss-doc-link {
+      float: right;
+      display: inline-block;
+      word-break: keep-all;
+      color: var(--ls-block-highlight-color);
+    }
 
     .kef-ss-inline .kef-ss-inputhint {
       background: var(--ls-secondary-background-color);
@@ -216,6 +225,7 @@ function provideStyles() {
       border: none;
     }
     .kef-ss-keyword-highlight {
+      color: var(--ls-page-mark-color);
       background-color: var(--ls-page-mark-bg-color);
     }
   `)
