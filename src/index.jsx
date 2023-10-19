@@ -99,7 +99,7 @@ function provideStyles() {
     }
     .kef-ss-container {
       background: var(--ls-primary-background-color);
-      min-width: 370px;
+      min-width: 360px;
       max-width: 800px;
       position: relative;
     }
@@ -111,6 +111,7 @@ function provideStyles() {
       border-bottom: 1px solid var(--ls-block-bullet-color);
       margin-bottom: 5px;
       background: var(--ls-tertiary-background-color) !important;
+      box-shadow: 1px 1px 4px 0 var(--ls-border-color) !important;
     }
     @keyframes spin {
       0% {
@@ -148,21 +149,14 @@ function provideStyles() {
       position: absolute;
       top: -10px;
       left: 0;
-      transform: translateY(-100%);
-      padding-left: 2px;
-      font-size: 0.88em;
+      transform: translateY(-110%);
+      padding: 0 0.5em;
+      font-size: 0.8em;
       line-height: 2;
-      color: var(--ls-secondary-text-color);
-      opacity: 0.95;
-      background: var(--ls-primary-background-color);
-      outline: 1px solid var(--ls-guideline-color);
-      box-shadow: 0 4px 16px 0 var(--ls-tertiary-background-color);
-      max-height: 200px;
-      overflow: auto;
-      & span[data-smartSearch="inputHintTitle"]{
-        font-size: .95em;
-        text-decoration: underline;
-      }
+      color: var(--ls-primary-background-color);
+      background: var(--ls-primary-text-color);
+      opacity: 0.8;
+      border-radius: 2px;
     }
     .kef-ss-list {
       list-style-type: none;
@@ -209,11 +203,13 @@ function provideStyles() {
       margin-left: 0.2rem;
       margin-right: 0.2rem;
     }
-
-    .kef-ss-inline .kef-ss-inputhint {
-      background: var(--ls-secondary-background-color);
-      color: var(--ls-link-ref-text-color);
+    .kef-ss-doc-link {
+      float: right;
+      display: inline-block;
+      word-break: keep-all;
+      color: var(--ls-block-highlight-color);
     }
+
     .kef-ss-inline .kef-ss-container {
       width: calc(100% + 40px);
       margin-left: -28px;

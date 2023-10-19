@@ -627,41 +627,47 @@ export default forwardRef(function SmartSearchInput({ onClose, root }, ref) {
           ))}
       </ul>
       <div class="kef-ss-inputhint">
-        {list.length > 0 && !isCompletionRequest
-          ? isMac
-            ? isGlobal
-              ? t("[Key combination]  select=goto; ⇧=sidebar")
-              : t("[Key combination]  select=ref; ⌘=embed; ⌘+⇧=embed children; ⌥=content; ⇧=goto; ⇧+⌥=sidebar; ⇥=complete")
-            : isGlobal
-            ? t("[Key combination]  select=goto; shift=sidebar")
-            : t("[Key combination]  select=ref; ctrl=embed; ctrl+shift=embed children; alt=content; shift=goto; shift+alt=sidebar; tab=complete")
-          : tagList.length > 0 || (isCompletionRequest && list.length > 0)
-          ? isMac
-            ? t("[Key combination]  select=complete; ⇥=complete; ⇧=goto; ⇧+⌥=sidebar")
-            : t("[Key combination]  select=complete; tab=complete; shift=goto; shift+alt=sidebar")
-          : desc()
-          }
-          <p style="text-align: right;">Smart Search --- <a href={t("https://github.com/sethyuan/logseq-plugin-smartsearch/blob/master/README.en.md")} target="_blank">{t("Learn more")}</a></p>
+        {list.length > 0 && !isCompletionRequest ? (
+          isMac ? (
+            isGlobal ? (
+              t("select=goto; ⇧=sidebar")
+            ) : (
+              t(
+                "select=ref; ⌘=embed; ⌘+⇧=embed children; ⌥=content; ⇧=goto; ⇧+⌥=sidebar; ⇥=complete",
+              )
+            )
+          ) : isGlobal ? (
+            t("select=goto; shift=sidebar")
+          ) : (
+            t(
+              "select=ref; ctrl=embed; ctrl+shift=embed children; alt=content; shift=goto; shift+alt=sidebar; tab=complete",
+            )
+          )
+        ) : tagList.length > 0 || (isCompletionRequest && list.length > 0) ? (
+          isMac ? (
+            t("select=complete; ⇥=complete; ⇧=goto; ⇧+⌥=sidebar")
+          ) : (
+            t("select=complete; tab=complete; shift=goto; shift+alt=sidebar")
+          )
+        ) : (
+          <>
+            <div>
+              {t(
+                "#[!]tag, ##tag, #>tag, >tag, @[!]prop: value, @prop [=<>]1, @prop~ -1w~d, []nltidwc, %j -1w~d, full text ;filter",
+              )}
+              <a
+                class="kef-ss-doc-link"
+                href={t(
+                  "https://github.com/sethyuan/logseq-plugin-smartsearch/blob/master/README.en.md",
+                )}
+              >
+                {t("→ doc")}
+              </a>
+            </div>
+          </>
+        )}
       </div>
     </div>
   )
 })
 
-const desc =()=> {
-  return  (
-            <div data-smartSearch="desc">
-              <details open>
-                <summary>
-                  <span data-smartSearch="inputHintTitle">{t("Searching Blocks with Keywords or \"#Tag Names\"")}</span>
-                </summary>
-                <ul>
-                  <li>{t("Use a comma (,) for AND searches.")}</li>
-                  <li>{t("#>tag name :Targets child blocks.")}</li>
-                  <li>{t("##tag name :Includes descendant blocks.")}</li>
-                  <li>{t("#[!]tag name :Excludes specific tags.")}</li>
-                  <li>{t("[]t: Represents TODO tasks.")}</li>
-                </ul>
-              </details>
-            </div>
-          )
-}
