@@ -207,10 +207,6 @@ function provideStyles() {
       color: var(--ls-block-highlight-color);
     }
 
-    .kef-ss-inline .kef-ss-inputhint {
-      background: var(--ls-secondary-background-color);
-      color: var(--ls-link-ref-text-color);
-    }
     .kef-ss-inline .kef-ss-container {
       width: calc(100% + 40px);
       margin-left: -28px;
