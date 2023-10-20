@@ -1,29 +1,31 @@
-import "@logseq/libs";
-import { setup, t } from "logseq-l10n";
-import { createRef, render } from "preact";
-import SmartSearchInput from "./comps/SmartSearchInput";
-import { INPUT_ID } from "./libs/cons";
-import { setDateOptions } from "./libs/query";
-import zhCN from "./translations/zh-CN.json";
-import ja from "./translations/ja.json";
-import ko from "./translations/ko.json";
-import zhHant from "./translations/zh-Hant.json";
-let inputContainer;
-let inputContainerParent;
-let textarea;
-let lastBlock;
+import "@logseq/libs"
+import { setup, t } from "logseq-l10n"
+import { createRef, render } from "preact"
+import SmartSearchInput from "./comps/SmartSearchInput"
+import { INPUT_ID } from "./libs/cons"
+import { setDateOptions } from "./libs/query"
+import zhCN from "./translations/zh-CN.json"
+import ja from "./translations/ja.json"
+import ko from "./translations/ko.json"
+import zhHant from "./translations/zh-Hant.json"
+let inputContainer
+let inputContainerParent
+let textarea
+let lastBlock
 
-const inputRef = createRef();
+const inputRef = createRef()
 
 async function main() {
-  await setup({ builtinTranslations: { "zh-CN": zhCN, ja, ko,"zh-Hant" :zhHant } });
+  await setup({
+    builtinTranslations: { "zh-CN": zhCN, ja, ko, "zh-Hant": zhHant },
+  })
 
   const { preferredDateFormat, preferredStartOfWeek } =
-    await logseq.App.getUserConfigs();
-  const weekStart = (+(preferredStartOfWeek ?? 6) + 1) % 7;
-  setDateOptions(preferredDateFormat, weekStart);
+    await logseq.App.getUserConfigs()
+  const weekStart = (+(preferredStartOfWeek ?? 6) + 1) % 7
+  setDateOptions(preferredDateFormat, weekStart)
 
-  provideStyles();
+  provideStyles()
 
   logseq.useSettingsSchema([
     {
@@ -38,13 +40,13 @@ async function main() {
       default: false,
       description: t("(Chinese only) Whether to enable matching with pinyin."),
     },
-  ]);
+  ])
 
   logseq.provideUI({
     key: INPUT_ID,
     path: "#app-container",
     template: `<div id="${INPUT_ID}"></div>`,
-  });
+  })
 
   if (logseq.settings?.shortcut) {
     logseq.App.registerCommandPalette(
@@ -54,18 +56,18 @@ async function main() {
         keybinding: { binding: logseq.settings.shortcut },
       },
       triggerInput,
-    );
+    )
   } else {
     logseq.App.registerCommandPalette(
       { key: "trigger-input", label: t("Trigger smartsearch input") },
       triggerInput,
-    );
+    )
   }
 
   // Let div root element get generated first.
   setTimeout(async () => {
-    inputContainer = parent.document.getElementById(INPUT_ID);
-    inputContainerParent = inputContainer.parentNode;
+    inputContainer = parent.document.getElementById(INPUT_ID)
+    inputContainerParent = inputContainer.parentNode
     render(
       <SmartSearchInput
         ref={inputRef}
@@ -73,14 +75,14 @@ async function main() {
         root={inputContainer}
       />,
       inputContainer,
-    );
-  }, 0);
+    )
+  }, 0)
 
-  logseq.App.onMacroRendererSlotted(macroRenderer);
+  logseq.App.onMacroRendererSlotted(macroRenderer)
 
   // logseq.beforeunload(() => {})
 
-  console.log("#smartsearch loaded");
+  console.log("#smartsearch loaded")
 }
 
 function provideStyles() {
@@ -234,74 +236,74 @@ function provideStyles() {
         padding-left: 1em;
       }
     }
-  `);
+  `)
 }
 
 function triggerInput() {
   if (inputContainer.style.display === "block") {
-    closeInput();
+    closeInput()
   } else {
-    openInput();
+    openInput()
   }
 }
 
 async function openInput(prefilled) {
-  textarea = parent.document.activeElement;
-  const editor = textarea.closest(".block-editor");
+  textarea = parent.document.activeElement
+  const editor = textarea.closest(".block-editor")
   if (editor) {
-    lastBlock = await logseq.Editor.getCurrentBlock();
-    editor.appendChild(inputContainer);
-    inputContainer.style.display = "block";
-    inputContainer.querySelector("input").select();
+    lastBlock = await logseq.Editor.getCurrentBlock()
+    editor.appendChild(inputContainer)
+    inputContainer.style.display = "block"
+    inputContainer.querySelector("input").select()
     if (prefilled) {
-      inputRef.current?.fill(prefilled);
+      inputRef.current?.fill(prefilled)
     }
   } else {
-    inputContainer.classList.add("kef-ss-global");
-    inputContainer.style.display = "block";
-    inputContainer.querySelector("input").select();
+    inputContainer.classList.add("kef-ss-global")
+    inputContainer.style.display = "block"
+    inputContainer.querySelector("input").select()
     if (prefilled) {
-      inputRef.current?.fill(prefilled);
+      inputRef.current?.fill(prefilled)
     }
   }
 }
 
 async function closeInput(text = "") {
-  const centered = inputContainer.classList.contains("kef-ss-global");
-  inputContainer.style.display = "none";
-  inputContainer.classList.remove("kef-ss-global");
-  inputContainerParent.appendChild(inputContainer);
+  const centered = inputContainer.classList.contains("kef-ss-global")
+  inputContainer.style.display = "none"
+  inputContainer.classList.remove("kef-ss-global")
+  inputContainerParent.appendChild(inputContainer)
   if (!centered) {
-    const pos = textarea.selectionStart;
-    const newPos = pos + text.length;
+    const pos = textarea.selectionStart
+    const newPos = pos + text.length
     if (text) {
-      const content = textarea.value;
+      const content = textarea.value
       await logseq.Editor.updateBlock(
         lastBlock.uuid,
         pos < content.length
           ? `${content.substring(0, pos)}${text}${content.substring(pos)}`
           : pos === content.length
-            ? `${content}${text}`
-            : `${content} ${text}`,
-      );
+          ? `${content}${text}`
+          : `${content} ${text}`,
+      )
     }
-    textarea.focus();
-    textarea.setSelectionRange(newPos, newPos);
+    textarea.focus()
+    textarea.setSelectionRange(newPos, newPos)
   }
 }
 
 async function macroRenderer({ slot, payload: { arguments: args, uuid } }) {
-  const type = args[0]?.trim();
-  if (type !== ":smartsearch") return;
+  const type = args[0]?.trim()
+  if (type !== ":smartsearch") return
 
-  const slotEl = parent.document.getElementById(slot);
-  if (!slotEl) return;
-  const renderered = slotEl.childElementCount > 0;
-  if (renderered) return;
+  const slotEl = parent.document.getElementById(slot)
+  if (!slotEl) return
+  const renderered = slotEl.childElementCount > 0
+  if (renderered) return
 
-  const id = `kef-ss-${slot}`;
+  const id = `kef-ss-${slot}`
 
-  slotEl.style.width = "100%";
+  slotEl.style.width = "100%"
 
   logseq.provideUI({
     key: `ss-${slot}`,
@@ -312,18 +314,18 @@ async function macroRenderer({ slot, payload: { arguments: args, uuid } }) {
       cursor: "default",
       flex: "1",
     },
-  });
+  })
 
   // Let div root element get generated first.
   setTimeout(async () => {
-    const el = parent.document.getElementById(id);
-    if (el == null) return;
-    render(<SmartSearchInput onClose={() => { }} root={el} />, el);
-  }, 0);
+    const el = parent.document.getElementById(id)
+    if (el == null) return
+    render(<SmartSearchInput onClose={() => {}} root={el} />, el)
+  }, 0)
 }
 
 const model = {
   openInput,
-};
+}
 
-logseq.ready(model, main).catch(console.error);
+logseq.ready(model, main).catch(console.error)
