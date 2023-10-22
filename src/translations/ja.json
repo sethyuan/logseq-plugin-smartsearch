@@ -3,10 +3,12 @@
   "(Chinese only) Whether to enable matching with pinyin.": "中国語のみ。ピンインによる一致を有効にするかどうか",
   "Trigger smartsearch input": "スマート検索ボックスの呼び出し",
   "Here. To find related pages, type >keyword": "ここに入力。関連するページを探すには「>キーワード」",
-    "#[!]tag, ##tag, #>tag, >tag, @[!]prop: value, @prop [=<>]1, @prop~ -1w~d, []nltidwc, %j -1w~d, full text ;filter": "検索記号: #>タグ (子ブロック)、##タグ (子孫ブロック含む)、[]t (TODO)、カンマで区切る, (AND検索)",
-    "select=ref; ⌘=embed; ⌘+⇧=embed children; ⌥=content; ⇧=goto; ⇧+⌥=sidebar; ⇥=complete": "選択=参照; ⌘=埋め込み; ⌘+⇧=子要素を埋め込む; ⌥=コンテンツ; ⇧=移動; ⇧+⌥=サイドバー; ⇥=完了",
-    "select=ref; ctrl=embed; ctrl+shift=embed children; alt=content; shift=goto; shift+alt=sidebar; tab=complete": "選択=参照; ctrl=埋め込み; ctrl+shift=子要素を埋め込む; alt=コンテンツ; shift=移動; shift+alt=サイドバー; tab=完了",
-    "select=complete; ⇥=complete; ⇧=goto; ⇧+⌥=sidebar": "選択=完了; ⇥=完了; ⇧=移動; ⇧+⌥=サイドバー",
-    "select=complete; tab=complete; shift=goto; shift+alt=sidebar": "選択=完了; tab=完了; shift=移動; shift+alt=サイドバー",
-    "https://github.com/sethyuan/logseq-plugin-smartsearch/blob/master/README.en.md": "https://github.com/sethyuan/logseq-plugin-smartsearch/blob/master/README.ja.md"  
+  "#[!]tag, ##tag, #>tag, >tag, @[!]prop: value, @prop [=<>]1, @prop~ -1w~d, []nltidwc, %j -1w~d, full text ;filter": "検索記号: #>タグ (子要素)、##タグ (子孫要素を含む)、[]t (TODO)、カンマ, で区切る (AND検索)",
+  "select=ref; ⌘=embed; ⌘+⇧=embed children; ⌥=content; ⇧=goto; ⇧+⌥=sidebar; ⇥=complete": "選択=参照; ⌘=埋込; (⌘+⇧=子要素のみ); ⌥=内容の挿入; ⇧=移動; ⇧+⌥=サイドバーへ; ⇥=進む",
+  "select=ref; ctrl=embed; ctrl+shift=embed children; alt=content; shift=goto; shift+alt=sidebar; tab=complete": "選択=参照; Ctrl=埋込; (Ctrl+Shift=子要素のみ); Alt=内容の挿入; Shift=移動; Shift+Alt=サイドバーへ; Tab=進む",
+  "select=complete; ⇥=complete; ⇧=goto; ⇧+⌥=sidebar": "選択,⇥=進む; ⇧=移動; ⇧+⌥=サイドバーへ",
+  "select=complete; tab=complete; shift=goto; shift+alt=sidebar": "選択,Tab=進む; Shift=移動; Shift+Alt=サイドバーへ",
+  "https://github.com/sethyuan/logseq-plugin-smartsearch/blob/master/README.en.md": "https://github.com/sethyuan/logseq-plugin-smartsearch/blob/master/README.ja.md",
+  "select=goto; ⇧=sidebar": "選択=移動; ⇧=サイドバーへ",
+  "select=goto; shift=sidebar": "選択=移動; Shift=サイドバーへ"
 }

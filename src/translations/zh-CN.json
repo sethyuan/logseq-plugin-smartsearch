@@ -8,5 +8,7 @@
   "select=ref; ctrl=embed; ctrl+shift=embed children; alt=content; shift=goto; shift+alt=sidebar; tab=complete": "选择=引用；ctrl=嵌入；ctrl+shift=嵌入子级；alt=内容；shift=跳转；shift+alt=侧边栏；tab=上屏",
   "select=complete; ⇥=complete; ⇧=goto; ⇧+⌥=sidebar": "选择=上屏；⇥=上屏；⇧=跳转；⇧+⌥=侧边栏",
   "select=complete; tab=complete; shift=goto; shift+alt=sidebar": "选择=上屏；tab=上屏；shift=跳转；shift+alt=侧边栏",
-  "https://github.com/sethyuan/logseq-plugin-smartsearch/blob/master/README.en.md": "https://github.com/sethyuan/logseq-plugin-smartsearch/blob/master/README.md"
+  "https://github.com/sethyuan/logseq-plugin-smartsearch/blob/master/README.en.md": "https://github.com/sethyuan/logseq-plugin-smartsearch/blob/master/README.md",
+  "select=goto; ⇧=sidebar": "选择=跳转；⇧=侧边栏",
+  "select=goto; shift=sidebar": "选择=跳转；shift=侧边栏"
 }

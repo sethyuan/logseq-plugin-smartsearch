@@ -8,5 +8,7 @@
   "select=ref; ctrl=embed; ctrl+shift=embed children; alt=content; shift=goto; shift+alt=sidebar; tab=complete": "선택=참조; ctrl=삽입; ctrl+shift=하위 항목 삽입; alt=콘텐츠; shift=이동; shift+alt=사이드바; tab=완료",
   "select=complete; ⇥=complete; ⇧=goto; ⇧+⌥=sidebar": "선택=완료; ⇥=완료; ⇧=이동; ⇧+⌥=사이드바",
   "select=complete; tab=complete; shift=goto; shift+alt=sidebar": "선택=완료; tab=완료; shift=이동; shift+alt=사이드바",
-  "https://github.com/sethyuan/logseq-plugin-smartsearch/blob/master/README.en.md": "https://github.com/sethyuan/logseq-plugin-smartsearch/blob/master/README.en.md"
+  "https://github.com/sethyuan/logseq-plugin-smartsearch/blob/master/README.en.md": "https://github.com/sethyuan/logseq-plugin-smartsearch/blob/master/README.en.md",
+  "select=goto; ⇧=sidebar": "선택=이동; ⇧=사이드바",
+  "select=goto; shift=sidebar" : "선택=이동; shift=사이드바"
 }
