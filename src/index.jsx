@@ -97,7 +97,7 @@ function provideStyles() {
     }
     .kef-ss-container {
       background: var(--ls-primary-background-color);
-      min-width: 360px;
+      min-width: 370px;
       max-width: 800px;
       position: relative;
     }
