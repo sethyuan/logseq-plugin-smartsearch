@@ -97,7 +97,7 @@ function provideStyles() {
     }
     .kef-ss-container {
       background: var(--ls-primary-background-color);
-      min-width: 370px;
+      min-width: 390px;
       max-width: 800px;
       position: relative;
     }
@@ -109,7 +109,7 @@ function provideStyles() {
       border-bottom: 1px solid var(--ls-block-bullet-color);
       margin-bottom: 5px;
       background: var(--ls-tertiary-background-color) !important;
-      box-shadow: 1px 1px 4px 0 var(--ls-border-color) !important;
+      box-shadow: 0 0 4px 0 var(--ls-border-color) !important;
     }
     @keyframes spin {
       0% {
