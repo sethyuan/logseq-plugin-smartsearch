@@ -566,7 +566,7 @@ export default forwardRef(function SmartSearchInput({ onClose, root }, ref) {
           ref={input}
           class="kef-ss-input"
           type="text"
-          placeholder={t("e.g.: #book, @published: 2000; holmes")}
+          placeholder={t("Here. To find related pages, type >keyword")}
           {...inputProps}
           onKeyDown={onKeyDown}
           onMouseDown={stopPropagation}
@@ -670,3 +670,4 @@ export default forwardRef(function SmartSearchInput({ onClose, root }, ref) {
     </div>
   )
 })
+

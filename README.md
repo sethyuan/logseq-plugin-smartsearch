@@ -1,4 +1,4 @@
-中文 | [English](README.en.md)
+README: [中文](https://github.com/sethyuan/logseq-plugin-smartsearch) | [English](https://github.com/sethyuan/logseq-plugin-smartsearch/blob/master/README.en.md) | [日本語](https://github.com/sethyuan/logseq-plugin-smartsearch/blob/master/README.ja.md)
 
 # logseq-plugin-smartsearch
 

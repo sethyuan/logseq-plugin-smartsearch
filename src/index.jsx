@@ -5,7 +5,9 @@ import SmartSearchInput from "./comps/SmartSearchInput"
 import { INPUT_ID } from "./libs/cons"
 import { setDateOptions } from "./libs/query"
 import zhCN from "./translations/zh-CN.json"
-
+import ja from "./translations/ja.json"
+import ko from "./translations/ko.json"
+import zhHant from "./translations/zh-Hant.json"
 let inputContainer
 let inputContainerParent
 let textarea
@@ -14,7 +16,9 @@ let lastBlock
 const inputRef = createRef()
 
 async function main() {
-  await setup({ builtinTranslations: { "zh-CN": zhCN } })
+  await setup({
+    builtinTranslations: { "zh-CN": zhCN, ja, ko, "zh-Hant": zhHant },
+  })
 
   const { preferredDateFormat, preferredStartOfWeek } =
     await logseq.App.getUserConfigs()
@@ -125,7 +129,7 @@ function provideStyles() {
       top: 8px;
       right: 8px;
       font-family: 'tabler-icons';
-      font-size: 0.8em;
+      font-size: 0.9em;
       margin-left: 6px;
       color: var(--ls-icon-color);
       will-change: transform;
@@ -145,7 +149,7 @@ function provideStyles() {
     }
     .kef-ss-inputhint {
       position: absolute;
-      top: 0;
+      top: -10px;
       left: 0;
       transform: translateY(-110%);
       padding: 0 0.5em;
@@ -159,11 +163,12 @@ function provideStyles() {
     .kef-ss-list {
       list-style-type: none;
       margin-left: 0;
-      font-size: 0.875rem;
-      background: var(--ls-tertiary-background-color);
-      border: 1px solid var(--ls-border-color);
+      font-size: 0.91em;
       max-height: 400px;
       overflow-y: auto;
+      opacity: 0.95;
+      background: var(--ls-tertiary-background-color);
+      outline: 1px solid var(--ls-guideline-color);
       box-shadow: 0 4px 16px 0 var(--ls-tertiary-background-color);
     }
     .kef-ss-list:empty {
@@ -210,7 +215,7 @@ function provideStyles() {
     .kef-ss-inline .kef-ss-container {
       width: calc(100% + 40px);
       margin-left: -28px;
-      margin-top: 20px;
+      margin-top: 210px;
       background: initial;
     }
     .kef-ss-inline .kef-ss-list {
@@ -223,6 +228,13 @@ function provideStyles() {
     .kef-ss-keyword-highlight {
       color: var(--ls-page-mark-color);
       background-color: var(--ls-page-mark-bg-color);
+    }
+    body>div#root>div>main.ls-right-sidebar-open div#right-sidebar {
+      & div[data-ref="${logseq.baseInfo.id}"] div.kef-ss-inputhint {
+        max-height: 150px;
+        width: 100%;
+        padding-left: 1em;
+      }
     }
   `)
 }
