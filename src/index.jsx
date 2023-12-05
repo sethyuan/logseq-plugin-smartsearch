@@ -97,9 +97,12 @@ function provideStyles() {
     }
     .kef-ss-container {
       background: var(--ls-primary-background-color);
-      min-width: 390px;
-      max-width: 800px;
+      width: 80vw;
+      max-width: var(--ls-main-content-max-width);
       position: relative;
+    }
+    .ls-wide-mode .kef-ss-container {
+      max-width: var(--ls-main-content-max-width-wide);
     }
     .kef-ss-input {
       position: relative;
