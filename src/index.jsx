@@ -97,12 +97,17 @@ function provideStyles() {
     }
     .kef-ss-container {
       background: var(--ls-primary-background-color);
-      width: 80vw;
+      min-width: 370px;
+      width: 100%;
       max-width: var(--ls-main-content-max-width);
       position: relative;
+      box-shadow: 0 0 16px 2px var(--ls-border-color);
     }
     .ls-wide-mode .kef-ss-container {
       max-width: var(--ls-main-content-max-width-wide);
+    }
+    .kef-ss-global .kef-ss-container {
+      width: 80vw;
     }
     .kef-ss-input {
       position: relative;
@@ -163,11 +168,9 @@ function provideStyles() {
       list-style-type: none;
       margin-left: 0;
       font-size: 0.875rem;
-      background: var(--ls-tertiary-background-color);
       border: 1px solid var(--ls-border-color);
       max-height: 400px;
       overflow-y: auto;
-      box-shadow: 0 4px 16px 0 var(--ls-tertiary-background-color);
     }
     .kef-ss-list:empty {
       display: none;
@@ -214,14 +217,11 @@ function provideStyles() {
       width: calc(100% + 40px);
       margin-left: -28px;
       margin-top: 20px;
-      background: initial;
+      box-shadow: none;
     }
     .kef-ss-inline .kef-ss-list {
-      box-shadow: none;
       height: calc(100vh - 230px);
       max-height: initial;
-      background: var(--ls-secondary-background-color);;
-      border: none;
     }
     .kef-ss-keyword-highlight {
       color: var(--ls-page-mark-color);
