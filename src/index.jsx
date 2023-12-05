@@ -176,7 +176,7 @@ function provideStyles() {
       display: none;
     }
     .kef-ss-listitem {
-      padding: 8px 16px;
+      padding: 10px 12px;
       margin: 0;
       cursor: pointer;
       display: flex;
@@ -193,7 +193,10 @@ function provideStyles() {
       flex: 0 0 auto;
       margin-right: 1em;
       font-weight: bold;
-      font-size: 0.875em;
+      font-size: 0.75em;
+      background-color: var(--ls-tertiary-background-color);
+      padding: 1px 5px;
+      border-radius: 4px;
     }
     .kef-ss-listitem-text {
       flex: 1 1 auto;
