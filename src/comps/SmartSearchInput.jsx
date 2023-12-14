@@ -8,7 +8,7 @@ import {
   useRef,
   useState,
 } from "preact/hooks"
-import { debounce } from "rambdax"
+import { debounce, throttle } from "rambdax"
 import { cls, useCompositionChange } from "reactutils"
 import EventEmitter from "../libs/event"
 import {
@@ -33,6 +33,9 @@ import Breadcrumb from "./Breadcrumb"
 const BLUR_WAIT = 200
 const HISTORY_LEN = 30
 
+const KEY_NAV_MODE = 0
+const MOUSE_NAV_MODE = 1
+
 const events = new EventEmitter()
 
 export default forwardRef(function SmartSearchInput({ onClose, root }, ref) {
@@ -41,6 +44,7 @@ export default forwardRef(function SmartSearchInput({ onClose, root }, ref) {
   const [list, setList] = useState([])
   const [tagList, setTagList] = useState([])
   const [chosen, setChosen] = useState(0)
+  const [navMode, setNavMode] = useState(KEY_NAV_MODE)
   const [isCompletionRequest, setIsCompletionRequest] = useState(false)
   const [historyList, setHistoryList] = useState([])
   const [showProgress, setShowProgress] = useState(false)
@@ -276,6 +280,7 @@ export default forwardRef(function SmartSearchInput({ onClose, root }, ref) {
         const len = list.length || tagList.length || historyList.length
         if (len > 0) {
           setChosen((n) => (n + 1 < len ? n + 1 : 0))
+          setNavMode(KEY_NAV_MODE)
         }
         break
       }
@@ -285,6 +290,7 @@ export default forwardRef(function SmartSearchInput({ onClose, root }, ref) {
         const len = list.length || tagList.length || historyList.length
         if (len > 0) {
           setChosen((n) => (n - 1 >= 0 ? n - 1 : len - 1))
+          setNavMode(KEY_NAV_MODE)
         }
         break
       }
@@ -510,6 +516,7 @@ export default forwardRef(function SmartSearchInput({ onClose, root }, ref) {
       lastResult.current = []
       lastTagResult.current = []
     }
+    setNavMode(KEY_NAV_MODE)
   }
 
   function setInputQuery(e, q, viaClick = false) {
@@ -529,6 +536,15 @@ export default forwardRef(function SmartSearchInput({ onClose, root }, ref) {
     // HACK: let input be shown first for better UX.
     setTimeout(() => performQuery(q), 16)
   }
+
+  const changeNavMode = useCallback(
+    throttle((e) => {
+      if (navMode === KEY_NAV_MODE) {
+        setNavMode(MOUSE_NAV_MODE)
+      }
+    }, 100),
+    [navMode],
+  )
 
   useEffect(() => {
     ul.current
@@ -577,7 +593,11 @@ export default forwardRef(function SmartSearchInput({ onClose, root }, ref) {
           &#xeb15;
         </div>
       </div>
-      <ul ref={ul} class="kef-ss-list">
+      <ul
+        ref={ul}
+        class={cls("kef-ss-list", navMode === KEY_NAV_MODE && "kef-ss-keynav")}
+        onMouseMove={changeNavMode}
+      >
         {list.map((block, i) => (
           <li
             key={block.uuid}

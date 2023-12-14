@@ -183,7 +183,7 @@ function provideStyles() {
       align-items: baseline;
       user-select: none;
     }
-    .kef-ss-listitem:hover {
+    .kef-ss-list:not(.kef-ss-keynav) .kef-ss-listitem:hover {
       background: var(--ls-quaternary-background-color);
     }
     .kef-ss-chosen {
@@ -263,6 +263,8 @@ async function openInput(prefilled) {
 }
 
 async function closeInput(text = "") {
+  if (inputContainer.offsetParent == null) return
+
   const centered = inputContainer.classList.contains("kef-ss-global")
   inputContainer.style.display = "none"
   inputContainer.classList.remove("kef-ss-global")
