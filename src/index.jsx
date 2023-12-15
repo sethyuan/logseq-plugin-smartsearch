@@ -259,6 +259,14 @@ async function openInput(prefilled) {
     if (prefilled) {
       inputRef.current?.fill(prefilled)
     }
+    render(
+      <SmartSearchInput
+        ref={inputRef}
+        onClose={closeInput}
+        root={inputContainer}
+      />,
+      inputContainer,
+    )
   }
 }
 
