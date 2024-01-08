@@ -195,7 +195,9 @@ function buildCond(cond, i) {
 export function includesValue(prop, val) {
   if (prop.toLowerCase == null) return false
   return logseq.settings?.enablePinyin ?? false
-    ? match(prop.toLowerCase(), val.toString(), { continuous: true }) != null
+    ? match(prop.toLowerCase(), val.toString().toLowerCase(), {
+        continuous: true,
+      }) != null
     : prop.toLowerCase().includes(val.toLowerCase())
 }
 

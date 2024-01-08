@@ -1,6 +1,6 @@
 {
   "name": "logseq-plugin-smartsearch",
-  "version": "0.30.8",
+  "version": "0.30.9",
   "main": "dist/index.html",
   "logseq": {
     "id": "_sethyuan-logseq-smartsearch",
